@@ -37,18 +37,29 @@ class App:
         self.pressed_at = 0
         self.pressed_time = 0
 
+        self.modes = [
+            {
+                "name": "Snake",
+                "function": lambda color, i: self.ledEffects.snake(color, 5, i),
+                "speed_multiplier": 100,
+            },
+            {
+                "name": "Fill",
+                "function": lambda color, _: self.ledEffects.fill(color),
+                "speed_multiplier": 10,
+            },
+            {
+                "name": "Pulse",
+                "function": lambda color, i: self.ledEffects.pulse_step(color, i),
+                "speed_multiplier": 10,
+            },
+        ]
+
         self.speed_modes = [1, 1 / 2, 1 / 4]
         self.speed_pointer = 0
-        self.speed_multiplier = 10
         self.speed = self._calc_speed()
 
         self.start_time = utime.ticks_ms()
-
-        self.modes = [
-            lambda color, _: self.ledEffects.fill(color),
-            lambda color, i: self.ledEffects.pulse_step(color, i),
-            lambda color, i: self.ledEffects.snake(color, 5, i),
-        ]
 
     def on_pressed(self):
         self.pressed_time = 0
@@ -78,7 +89,10 @@ class App:
                 self.on_released()
 
     def _calc_speed(self):
-        return self.speed_modes[self.speed_pointer] * self.speed_multiplier
+        return (
+            self.speed_modes[self.speed_pointer]
+            * self.modes[self.mode_pointer]["speed_multiplier"]
+        )
 
     def change_speed(self):
         self.speed_pointer = (self.speed_pointer + 1) % len(self.speed_modes)
@@ -123,7 +137,7 @@ class App:
             time_pointer = elapsed_time // self.speed
             color = self.colors_list[self.colors_pointer]
 
-            self.modes[self.mode_pointer](color, time_pointer)
+            self.modes[self.mode_pointer]["function"](color, time_pointer)
 
             self.button_process()
 
