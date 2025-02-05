@@ -37,7 +37,7 @@ class App:
         self.pressed_at = 0
         self.pressed_time = 0
 
-        self.speed_modes = [1, 1 / 2, 1 / 4, 1 / 8, 1 / 16, 1 / 32]
+        self.speed_modes = [1, 1 / 2, 1 / 4]
         self.speed_pointer = 0
         self.speed_multiplier = 10
         self.speed = self._calc_speed()
@@ -122,7 +122,7 @@ class App:
 
             time_pointer = elapsed_time // self.speed
             color = self.colors_list[self.colors_pointer]
-            
+
             self.modes[self.mode_pointer](color, time_pointer)
 
             self.button_process()
