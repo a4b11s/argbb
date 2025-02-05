@@ -1,5 +1,4 @@
 import neopixel
-import utime
 
 
 class LedEffects:
