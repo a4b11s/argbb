@@ -12,36 +12,22 @@ class App:
         "off": 20_000,
     }
 
-    colors = {
-        "red": (255, 0, 0),
-        "green": (0, 255, 0),
-        "blue": (0, 0, 255),
-        "yellow": (255, 255, 0),
-        "cyan": (0, 255, 255),
-        "magenta": (255, 0, 255),
-        "white": (255, 255, 255),
-    }
-
-    colors_list = list(colors.values())
-
     def __init__(self, controller: LedController, button_pin: Pin):
         self.controller = controller
         self.button = Button(button_pin, self.button_config)
         self.is_sleeping = False
 
-        self.colors_pointer = 0
-
         self.modes = ModeController(controller)
         self.start_time = utime.ticks_ms()
 
     def change_speed(self):
-        self.modes.change_speed()
+        self.modes.get_current_mode().change_speed()
 
     def change_mode(self):
         self.modes.change_mode()
 
     def change_color(self):
-        self.colors_pointer = (self.colors_pointer + 1) % len(self.colors_list)
+        self.modes.get_current_mode().change_color()
 
     def _on_short_press(self):
         self.change_speed()
@@ -57,8 +43,8 @@ class App:
 
         while True:
             elapsed_time = utime.ticks_diff(utime.ticks_ms(), self.start_time)
-            time_pointer = elapsed_time // self.modes.get_speed()
-            color = self.colors_list[self.colors_pointer]
+            time_pointer = elapsed_time // self.modes.get_current_mode().get_speed()
+            color = self.modes.get_current_mode().get_color()
 
             current_mode = self.modes.get_current_mode()
             current_mode.apply(color, time_pointer)
@@ -74,9 +60,10 @@ class App:
             utime.sleep_ms(10)
 
     def _print_debug(self):
-        string = f"Speed: {self.modes.get_speed()},"
-        string += f" Mode: {self.modes.get_current_mode().name},"
-        string += f" Color: {self.colors_list[self.colors_pointer]},"
+        current_mode = self.modes.get_current_mode()
+        string = f"Speed: {current_mode.get_speed()},"
+        string += f" Mode: {current_mode.name},"
+        string += f" Color: {current_mode.get_color()},"
         string += f" Pressed: {self.button.is_pressed},"
         string += f" Pressed Time: {self.button.pressed_time}"
         string += "\r"
