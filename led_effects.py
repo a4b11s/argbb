@@ -1,8 +1,9 @@
 import neopixel
+from .config import LED_PIN, NUM_LEDS  # Import configuration
 
 
 class LedEffects:
-    def __init__(self, pin, num_leds):
+    def __init__(self, pin=LED_PIN, num_leds=NUM_LEDS):  # Use default config values
         self.pixels = neopixel.NeoPixel(pin, num_leds)
         self.num_leds = num_leds
         self.pixels.fill((0, 0, 0))
@@ -12,57 +13,40 @@ class LedEffects:
         self.pixels.fill(color)
         self.pixels.write()
 
-    def pulse_step(self, color, pointer=0):
-        processed_pointer = pointer % 512
-
-        processed_pointer = (
-            processed_pointer if processed_pointer < 256 else 511 - processed_pointer
-        )
-
-        color = tuple(map(lambda x: int(x * processed_pointer / 255), color))
+    def pulse_step(self, color, step=0):
+        # Normalize step to be within 0-511
+        step = step % 512
+        # Reflect step to create a pulsing effect
+        step = step if step < 256 else 511 - step
+        # Scale color by the step value
+        color = tuple(int(c * step / 255) for c in color)
         self.fill(color)
 
-    def snake(
-        self,
-        color,
-        length=5,
-        pointer=0,
-        background=(0, 0, 0),
-    ):
+    def snake(self, color, length=5, step=0, background=(0, 0, 0)):
         if length > self.num_leds:
             raise ValueError("Length should be less than the number of LEDs")
         if isinstance(color, list) and len(color) != length:
             raise ValueError("Length of color list should be equal to length")
 
-        index_max = self.num_leds - length + 1
-        index_max *= 2
-        processed_pointer = int(pointer % index_max)
+        # Calculate the maximum index for the snake movement
+        max_index = (self.num_leds - length + 1) * 2
+        step = step % max_index
 
         self.pixels.fill(background)
-        if processed_pointer <= self.num_leds - length:
-            self._snake_forward(color, length, processed_pointer)
-        else:
-            self._snake_backward(color, length, processed_pointer)
-        self.pixels.write()
-
-    def _snake_forward(self, color, length, processed_pointer):
-        self._snake_common(color, length, processed_pointer, forward=True)
-
-    def _snake_backward(self, color, length, processed_pointer):
-        self._snake_common(color, length, processed_pointer, forward=False)
-
-    def _snake_common(self, color, length, processed_pointer, forward):
-        for j in range(length):
-            if forward:
-                index = processed_pointer + j
-            else:
-                index = (
-                    self.num_leds - (processed_pointer - (self.num_leds - length)) + j
-                )
+        forward = step <= self.num_leds - length
+        for i in range(length):
+            index = self._calculate_index(i, length, step, forward)
             if isinstance(color, tuple):
                 self.pixels[index] = color  # type: ignore
             elif isinstance(color, list):
-                self.pixels[index] = color[j]  # type: ignore
+                self.pixels[index] = color[i]  # type: ignore
+        self.pixels.write()
+
+    def _calculate_index(self, i, length, step, forward):
+        if forward:
+            return step + i
+        else:
+            return self.num_leds - step - i - 1
 
     def clear(self):
         self.fill((0, 0, 0))

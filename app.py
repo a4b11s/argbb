@@ -66,13 +66,11 @@ class App:
         self.has_been_pressed = True
         self.is_pressed = True
         self.pressed_at = utime.ticks_ms()
-        print("Pressed")
 
     def on_released(self):
         self.is_pressed = False
         self.pressed_time = utime.ticks_diff(utime.ticks_ms(), self.pressed_at)
         self.pressed_at = 0
-        print("Pressed for", self.pressed_time, "ms")
 
     def check_button(self):
         if self.button.value() == 0:
@@ -133,7 +131,6 @@ class App:
 
         while True:
             elapsed_time = utime.ticks_diff(utime.ticks_ms(), self.start_time)
-
             time_pointer = elapsed_time // self.speed
             color = self.colors_list[self.colors_pointer]
 
@@ -145,7 +142,14 @@ class App:
             utime.sleep_ms(10)
 
     def _print_debug(self):
+        string = f"Speed: {self.speed},"
+        string += f" Mode: {self.modes[self.mode_pointer]['name']},"
+        string += f" Color: {self.colors_list[self.colors_pointer]},"
+        string += f" Pressed: {self.is_pressed},"
+        string += f" Pressed Time: {self.pressed_time}"
+        string += "\r"
+
         print(
-            f"Speed: {self.speed}, Mode: {self.mode_pointer}, Pressed: {self.is_pressed}, Pressed Time: {self.pressed_time} \r",
+            string,
             end="",
         )

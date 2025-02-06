@@ -13,8 +13,7 @@ NUM_LEDS = 60
 def init():
     global led_effects, button, app
 
-    strip_pin = Pin(STRIP_PIN_NUMBER, Pin.OUT)
-    led_effects = LedEffects(strip_pin, NUM_LEDS)
+    led_effects = LedEffects(STRIP_PIN_NUMBER, NUM_LEDS)
     button = Pin(BUTTON_PIN_NUMBER, Pin.IN, Pin.PULL_UP)
 
     app = App(led_effects, button)
