@@ -28,7 +28,10 @@ class ModeBase:
         return self.colors_list[self.colors_pointer]
 
     def change_color(self):
-        self.colors_pointer = (self.colors_pointer + 1) % len(self.colors_list)
+        self.colors_pointer = self._calculate_colors_pointer()
 
+    def _calculate_colors_pointer(self):
+        return (self.colors_pointer + 1) % len(self.colors_list)
+    
     def apply(self, color, time_pointer):
         raise NotImplementedError("Subclasses should implement this method")

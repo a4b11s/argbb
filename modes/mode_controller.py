@@ -1,6 +1,7 @@
 from modes.snake_mode import SnakeMode
 from modes.fill_mode import FillMode
 from modes.pulse_mode import PulseMode
+from modes.rainbow_pulse_mode import RainbowPulseMode
 from led_effects.fill_effect import FillEffect
 from led_effects.pulse_effect import PulseEffect
 from led_effects.snake_effect import SnakeEffect
@@ -9,7 +10,7 @@ from led_effects.snake_effect import SnakeEffect
 class ModeController:
     def __init__(self, controller):
         self.modes = [
-            SnakeMode("Snake", SnakeEffect(controller), 100),
+            RainbowPulseMode("Rainbow Pulse", PulseEffect(controller), 10),
             FillMode("Fill", FillEffect(controller), 10),
             PulseMode("Pulse", PulseEffect(controller), 10),
         ]

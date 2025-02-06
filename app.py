@@ -5,6 +5,7 @@ import utime
 from config import DEBUG_MODE
 from button import Button
 
+
 class App:
     button_config = {
         "long_press": 600,
@@ -44,15 +45,14 @@ class App:
         while True:
             elapsed_time = utime.ticks_diff(utime.ticks_ms(), self.start_time)
             time_pointer = elapsed_time // self.modes.get_current_mode().get_speed()
-            color = self.modes.get_current_mode().get_color()
 
             current_mode = self.modes.get_current_mode()
-            current_mode.apply(color, time_pointer)
+            current_mode.apply(time_pointer)
 
             self.button.button_process(
                 on_short_press=self._on_short_press,
                 on_long_press=self._on_long_press,
-                on_very_long_press=self._on_very_long_press
+                on_very_long_press=self._on_very_long_press,
             )
 
             if DEBUG_MODE:
