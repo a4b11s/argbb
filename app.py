@@ -1,5 +1,5 @@
 from machine import Pin
-from led_effects import LedEffects
+from led_effects import LedController, PulseEffect, SnakeEffect, FillEffect
 import utime
 
 
@@ -22,8 +22,8 @@ class App:
 
     colors_list = list(colors.values())
 
-    def __init__(self, ledEffects: LedEffects, button: Pin):
-        self.ledEffects = ledEffects
+    def __init__(self, controller: LedController, button: Pin):
+        self.controller = controller
         self.button = button
         self.is_sleeping = False
 
@@ -32,24 +32,24 @@ class App:
 
         self.colors_pointer = 0
 
-        self.mode_pointer = 0
+        self.mode_pointer = 1
         self.pressed_at = 0
         self.pressed_time = 0
 
         self.modes = [
             {
                 "name": "Snake",
-                "function": lambda color, i: self.ledEffects.snake(color, 5, i),
+                "effect": SnakeEffect(controller),
                 "speed_multiplier": 100,
             },
             {
                 "name": "Fill",
-                "function": lambda color, _: self.ledEffects.fill(color),
+                "effect": FillEffect(controller),
                 "speed_multiplier": 10,
             },
             {
                 "name": "Pulse",
-                "function": lambda color, i: self.ledEffects.pulse_step(color, i),
+                "effect": PulseEffect(controller),
                 "speed_multiplier": 10,
             },
         ]
@@ -133,7 +133,11 @@ class App:
             time_pointer = elapsed_time // self.speed
             color = self.colors_list[self.colors_pointer]
 
-            self.modes[self.mode_pointer]["function"](color, time_pointer)
+            current_mode = self.modes[self.mode_pointer]
+            if current_mode["effect"]:
+                current_mode["effect"].apply(color, time_pointer)
+            else:
+                self.controller.fill(color)
 
             self.button_process()
 
