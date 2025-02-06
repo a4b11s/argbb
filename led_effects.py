@@ -34,60 +34,35 @@ class LedEffects:
         if isinstance(color, list) and len(color) != length:
             raise ValueError("Length of color list should be equal to length")
 
-        processed_pointer = pointer % (self.num_leds + length)
+        index_max = self.num_leds - length + 1
+        index_max *= 2
+        processed_pointer = int(pointer % index_max)
 
         self.pixels.fill(background)
-        if processed_pointer < self.num_leds:
-            for j in range(length):
-                indx = processed_pointer + j
-                if isinstance(color, tuple):
-                    self.pixels[indx] = color # type: ignore
-                elif isinstance(color, list):
-                    self.pixels[indx] = color[j] # type: ignore
+        if processed_pointer <= self.num_leds - length:
+            self._snake_forward(color, length, processed_pointer)
         else:
-            for j in range(length):
-                indx = processed_pointer - j
-                if isinstance(color, tuple):
-                    self.pixels[indx] = color # type: ignore
-                elif isinstance(color, list):
-                    self.pixels[indx] = color[j] # type: ignore
+            self._snake_backward(color, length, processed_pointer)
         self.pixels.write()
 
-    # def snake(self, color, duration, length=5, background=(0, 0, 0), reverse=False):
-    # if length > self.num_leds:
-    #     raise ValueError("Length should be less than the number of LEDs")
-    # if not isinstance(color, tuple) and not isinstance(color, list):
-    #     raise ValueError("Color should be a tuple or a list of tuples")
-    # if isinstance(color, list) and len(color) != length:
-    #     raise ValueError("Length of color list should be equal to length")
-    # if not isinstance(background, tuple):
-    #     raise ValueError("Background should be a tuple")
+    def _snake_forward(self, color, length, processed_pointer):
+        self._snake_common(color, length, processed_pointer, forward=True)
 
-    #     range_first = (
-    #         range(self.num_leds - length)
-    #         if not reverse
-    #         else range(self.num_leds - 1, length - 1, -1)
-    #     )
+    def _snake_backward(self, color, length, processed_pointer):
+        self._snake_common(color, length, processed_pointer, forward=False)
 
-    #     for i in range_first:
-    #         if reverse and i < length:
-    #             break
-
-    #         if not reverse and i + length > self.num_leds:
-    #             break
-
-    #         self.fill(background)
-    #         for j in range(length):
-    #             indx = i + j if not reverse else i - j
-
-    #             if isinstance(color, tuple):
-    #                 self.pixels[indx] = color  # type: ignore
-    #             elif isinstance(color, list):
-    #                 self.pixels[indx] = color[j]  # type: ignore
-
-    #         self.pixels.write()
-    #         utime.sleep_ms(duration)
-    #     self.fill(background)
+    def _snake_common(self, color, length, processed_pointer, forward):
+        for j in range(length):
+            if forward:
+                index = processed_pointer + j
+            else:
+                index = (
+                    self.num_leds - (processed_pointer - (self.num_leds - length)) + j
+                )
+            if isinstance(color, tuple):
+                self.pixels[index] = color  # type: ignore
+            elif isinstance(color, list):
+                self.pixels[index] = color[j]  # type: ignore
 
     def clear(self):
         self.fill((0, 0, 0))
