@@ -1,7 +1,7 @@
 from machine import Pin
 from led_effects import LedController, PulseEffect, SnakeEffect, FillEffect
 import utime
-
+from config import DEBUG_MODE
 
 class App:
     button_config = {
@@ -32,7 +32,7 @@ class App:
 
         self.colors_pointer = 0
 
-        self.mode_pointer = 1
+        self.mode_pointer = 0
         self.pressed_at = 0
         self.pressed_time = 0
 
@@ -141,7 +141,8 @@ class App:
 
             self.button_process()
 
-            self._print_debug()
+            if DEBUG_MODE:
+                self._print_debug()
             utime.sleep_ms(10)
 
     def _print_debug(self):
