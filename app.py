@@ -1,5 +1,4 @@
 from machine import Pin
-import machine
 from led_effects import LedEffects
 import utime
 
