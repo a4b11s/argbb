@@ -1,6 +1,4 @@
-from abc import ABC, abstractmethod
-
-class ModeBase(ABC):
+class ModeBase:
     colors = {
         "red": (255, 0, 0),
         "green": (0, 255, 0),
@@ -32,6 +30,5 @@ class ModeBase(ABC):
     def change_color(self):
         self.colors_pointer = (self.colors_pointer + 1) % len(self.colors_list)
 
-    @abstractmethod
     def apply(self, color, time_pointer):
-        pass
+        raise NotImplementedError("Subclasses should implement this method")
