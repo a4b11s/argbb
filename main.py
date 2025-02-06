@@ -1,5 +1,5 @@
 from app import App
-from led_effects import LedEffects
+from led_effects import LedController
 from machine import Pin
 
 import machine
@@ -11,20 +11,20 @@ NUM_LEDS = 60
 
 
 def init():
-    global led_effects, button, app
+    global led_controller, button, app
 
-    led_effects = LedEffects(STRIP_PIN_NUMBER, NUM_LEDS)
+    led_controller = LedController(Pin(STRIP_PIN_NUMBER), NUM_LEDS)  # type: ignore
     button = Pin(BUTTON_PIN_NUMBER, Pin.IN, Pin.PULL_UP)
 
-    app = App(led_effects, button)
+    app = App(led_controller, button)
 
 
 def off():
-    global led_effects, app, button
-    led_effects.fill((0, 0, 0))
-    led_effects.pixels.write()
+    global led_controller, app, button
+    led_controller.fill((0, 0, 0))
+    led_controller.pixels.write()
 
-    del app, led_effects, button
+    del app, led_controller, button
     gc.collect()
     machine.Pin(BUTTON_PIN_NUMBER, machine.Pin.IN, machine.Pin.PULL_UP).irq(
         trigger=Pin.IRQ_RISING,
@@ -37,7 +37,7 @@ def wake_up():
     global app, button
     init()
     button.irq(handler=None)
-    app = App(led_effects, button)
+    app = App(led_controller, button)
     print("Woke up")
     start()
 
