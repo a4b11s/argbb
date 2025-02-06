@@ -1,7 +1,9 @@
 from machine import Pin
-from led_effects import LedController, PulseEffect, SnakeEffect, FillEffect
+from led_effects.led_controller import LedController
+from modes.mode_controller import ModeController
 import utime
 from config import DEBUG_MODE
+
 
 class App:
     button_config = {
@@ -32,31 +34,9 @@ class App:
 
         self.colors_pointer = 0
 
-        self.mode_pointer = 0
+        self.modes = ModeController(controller)
         self.pressed_at = 0
         self.pressed_time = 0
-
-        self.modes = [
-            {
-                "name": "Snake",
-                "effect": SnakeEffect(controller),
-                "speed_multiplier": 100,
-            },
-            {
-                "name": "Fill",
-                "effect": FillEffect(controller),
-                "speed_multiplier": 10,
-            },
-            {
-                "name": "Pulse",
-                "effect": PulseEffect(controller),
-                "speed_multiplier": 10,
-            },
-        ]
-
-        self.speed_modes = [1, 1 / 2, 1 / 4]
-        self.speed_pointer = 0
-        self.speed = self._calc_speed()
 
         self.start_time = utime.ticks_ms()
 
@@ -85,18 +65,11 @@ class App:
             if self.is_pressed:
                 self.on_released()
 
-    def _calc_speed(self):
-        return (
-            self.speed_modes[self.speed_pointer]
-            * self.modes[self.mode_pointer]["speed_multiplier"]
-        )
-
     def change_speed(self):
-        self.speed_pointer = (self.speed_pointer + 1) % len(self.speed_modes)
-        self.speed = self._calc_speed()
+        self.modes.change_speed()
 
     def change_mode(self):
-        self.mode_pointer = (self.mode_pointer + 1) % len(self.modes)
+        self.modes.change_mode()
 
     def change_color(self):
         self.colors_pointer = (self.colors_pointer + 1) % len(self.colors_list)
@@ -130,14 +103,11 @@ class App:
 
         while True:
             elapsed_time = utime.ticks_diff(utime.ticks_ms(), self.start_time)
-            time_pointer = elapsed_time // self.speed
+            time_pointer = elapsed_time // self.modes.get_speed()
             color = self.colors_list[self.colors_pointer]
 
-            current_mode = self.modes[self.mode_pointer]
-            if current_mode["effect"]:
-                current_mode["effect"].apply(color, time_pointer)
-            else:
-                self.controller.fill(color)
+            current_mode = self.modes.get_current_mode()
+            current_mode.apply(color, time_pointer)
 
             self.button_process()
 
@@ -146,8 +116,8 @@ class App:
             utime.sleep_ms(10)
 
     def _print_debug(self):
-        string = f"Speed: {self.speed},"
-        string += f" Mode: {self.modes[self.mode_pointer]['name']},"
+        string = f"Speed: {self.modes.get_speed()},"
+        string += f" Mode: {self.modes.get_current_mode().name},"
         string += f" Color: {self.colors_list[self.colors_pointer]},"
         string += f" Pressed: {self.is_pressed},"
         string += f" Pressed Time: {self.pressed_time}"

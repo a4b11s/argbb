@@ -1,5 +1,5 @@
 from app import App
-from led_effects import LedController
+from led_effects.led_controller import LedController
 from machine import Pin
 
 import machine
