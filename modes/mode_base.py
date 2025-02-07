@@ -15,14 +15,23 @@ class ModeBase:
         self.speed_multiplier = speed_multiplier
         self.speed_modes = [1, 1 / 2, 1 / 4]
         self.speed_pointer = 0
+        self.speed = self.get_speed()
+
         self.colors_list = list(self.colors.values())
         self.colors_pointer = 0
 
-    def get_speed(self):
+    def _calculate_speed(self):
         return self.speed_modes[self.speed_pointer] * self.speed_multiplier
+
+    def get_speed(self):
+        return self.speed
+
+    def set_speed(self, speed):
+        self.speed = speed
 
     def change_speed(self):
         self.speed_pointer = (self.speed_pointer + 1) % len(self.speed_modes)
+        self.speed = self._calculate_speed()
 
     def get_color(self):
         return self.colors_list[self.colors_pointer]
@@ -32,6 +41,6 @@ class ModeBase:
 
     def _calculate_colors_pointer(self):
         return (self.colors_pointer + 1) % len(self.colors_list)
-    
+
     def apply(self, color, time_pointer):
         raise NotImplementedError("Subclasses should implement this method")
