@@ -25,6 +25,8 @@ class Mode:
     def run(self):
         raise NotImplementedError("run() not implemented")
 
+
+class MonoColorMode(Mode):
     @property
     def color(self):
         return self.colors[self.current_color_name]
@@ -40,4 +42,5 @@ class Mode:
             await self.task
 
     def _on_color_change(self):
-        pass
+        if self.task:
+            self.task.close()
