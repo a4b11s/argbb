@@ -1,23 +1,18 @@
 import neopixel
 import machine
 import utime
+from led_effects.pulse_effect import PulseEffect
+from strip import strip
 
 BUTTON_PIN_NUMBER = 16
 STRIP_PIN_NUMBER = 15
 NUM_LEDS = 60
 
-strip = neopixel.NeoPixel(machine.Pin(STRIP_PIN_NUMBER), NUM_LEDS)
-
 strip.fill((0, 0, 0))
 strip.write()
 
+led_effect = PulseEffect(strip)
+
 while True:
-    print("Blinking red")
-    for i in range(NUM_LEDS):
-        strip[i] = (255, 0, 0)
-        strip.write()
-        utime.sleep_ms(100)
-    for i in range(NUM_LEDS):
-        strip[i] = (0, 0, 0)
-        strip.write()
-        utime.sleep_ms(100)
+    led_effect.run((255, 0, 0), 10)
+    print("Pulse effect done")
