@@ -1,7 +1,6 @@
 from modes.mode import Mode
 from led_effects.pulse_effect import PulseEffect
 from strip import strip
-import asyncio
 
 
 class PulseMode(Mode):
