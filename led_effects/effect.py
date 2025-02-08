@@ -20,3 +20,6 @@ class Effect:
 
     async def run(self, color, sleep_ms):
         raise NotImplementedError("run() method must be implemented in subclass")
+
+    async def _sleep(self, sleep_ms):
+        await asyncio.sleep(sleep_ms / 1000)
