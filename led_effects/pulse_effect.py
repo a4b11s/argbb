@@ -3,9 +3,7 @@ import asyncio
 
 
 class PulseEffect(Effect):
-    def __init__(self, strip):
-        super().__init__(strip)
-        self._brightness_steps = 100
+    _brightness_steps = 100
 
     @property
     def brightness_steps(self):
