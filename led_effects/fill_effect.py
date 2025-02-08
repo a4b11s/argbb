@@ -7,6 +7,3 @@ class FillEffect(Effect):
         self.strip.fill(color)
         self.strip.write()
         await self._sleep(sleep_ms)
-
-    async def _sleep(self, sleep_ms):
-        await asyncio.sleep(sleep_ms / 1000)
