@@ -1,3 +1,4 @@
+from modes.filling_mode import FillingMode
 from strip import strip
 from modes.pulse_mode import PulseMode
 import asyncio
@@ -11,7 +12,7 @@ strip.fill((0, 0, 0))
 strip.write()
 
 pm = PulseMode()
-
+fm = FillingMode()
 
 async def work_emulator():
     while True:
@@ -22,7 +23,7 @@ async def work_emulator():
 
 async def main():
     asyncio.create_task(work_emulator())
-    asyncio.create_task(pm.run())
+    asyncio.create_task(fm.run())
     x = 0
     while True:
         await asyncio.sleep(1)
