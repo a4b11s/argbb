@@ -17,5 +17,5 @@ class LedEffect:
     def __init__(self, strip):
         self.strip: IStrip = strip
 
-    def run(self, color, sleep_ms):
+    async def run(self, color, sleep_ms):
         raise NotImplementedError("run() method must be implemented in subclass")
