@@ -10,9 +10,7 @@ class PulseMode(Mode):
         self.speed = 25
 
     async def run(self):
-        while True:
-            self.task = self.led_effect.run(self.color, self.speed)
-            await self.task
+        await self._loop(self.led_effect.run, (self.color, self.speed))
 
     def _on_color_change(self):
         if self.task:

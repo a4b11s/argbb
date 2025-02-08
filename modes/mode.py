@@ -2,6 +2,8 @@ from led_effects.effect import Effect
 
 
 class Mode:
+    task = None
+
     speed: int = 1
     colors = {
         "red": (255, 0, 0),
@@ -31,6 +33,11 @@ class Mode:
     def color(self, color_name):
         self.current_color_name = color_name
         self._on_color_change()
+
+    async def _loop(self, coroutine, args=()):
+        while True:
+            self.task = coroutine(*args)
+            await self.task
 
     def _on_color_change(self):
         pass
