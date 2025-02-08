@@ -1,8 +1,8 @@
-from led_effects.led_effect import LedEffect
-import utime
+from led_effects.effect import Effect
 import asyncio
 
-class PulseEffect(LedEffect):
+
+class PulseEffect(Effect):
     def __init__(self, strip):
         super().__init__(strip)
         self._brightness_steps = 100

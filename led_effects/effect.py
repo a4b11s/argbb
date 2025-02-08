@@ -13,7 +13,7 @@ class IStrip(neopixel.NeoPixel):
         return super().__len__()  # type: ignore
 
 
-class LedEffect:
+class Effect:
     def __init__(self, strip):
         self.strip: IStrip = strip
 
