@@ -1,4 +1,4 @@
-from led_effects.led_effect import LedEffect
+from led_effects.effect import Effect
 
 
 class Mode:
@@ -15,7 +15,7 @@ class Mode:
 
     current_color_name = "red"
 
-    def __init__(self, led_effect: LedEffect):
+    def __init__(self, led_effect: Effect):
         self.led_effect = led_effect
 
         self.speed = 1
