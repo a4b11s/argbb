@@ -29,4 +29,7 @@ class PulseEffect(Effect):
         br_color = self._calculate_brightness(color, step)
         self.strip.fill(br_color)
         self.strip.write()
+        await self._sleep(sleep_ms)
+
+    async def _sleep(self, sleep_ms):
         await asyncio.sleep(sleep_ms / 1000)
