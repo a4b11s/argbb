@@ -14,7 +14,7 @@ async def change_mode():
     while True:
         await asyncio.sleep(4)
         print("Changing mode")
-        mode_controller.next_mode()
+        mode_controller.next_color()
 
 
 async def work_emulator():

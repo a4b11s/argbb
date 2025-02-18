@@ -1,5 +1,5 @@
 from led_effects.effect import Effect
-
+from utils import calc_pointer
 
 class Mode:
     task = None
@@ -35,6 +35,9 @@ class Mode:
         self._on_color_change()
 
     def _on_color_change(self):
+        self._close_task()
+
+    def _close_task(self):
         if self.task:
             self.task.close()
 
@@ -54,7 +57,7 @@ class MultiColorMode(Mode):
         super().__init__(led_effect)
 
     def next_color(self):
-        self.current_color_index = (self.current_color_index + 1) % len(self.colors)
+        self.current_color_index = calc_pointer(self.current_color_index, 1, len(self.colors))
 
     async def _loop(self, coroutine, args=()):
         while True:
