@@ -1,15 +1,20 @@
-from modes.RainbowPulse_mode import RainbowPulseMode
-from modes.filling_mode import FillingMode
 from strip import strip
-from modes.pulse_mode import PulseMode
 import asyncio
 import utime
+from mode_controller import ModeController
 
 BUTTON_PIN_NUMBER = 16
 STRIP_PIN_NUMBER = 15
 NUM_LEDS = 60
 
-rpm = RainbowPulseMode()
+mode_controller = ModeController()
+
+
+async def change_mode():
+    while True:
+        await asyncio.sleep(4)
+        print("Changing mode")
+        mode_controller.next_mode()
 
 
 async def work_emulator():
@@ -21,7 +26,8 @@ async def work_emulator():
 
 async def main():
     asyncio.create_task(work_emulator())
-    asyncio.create_task(rpm.run())
+    asyncio.create_task(mode_controller.run())
+    asyncio.create_task(change_mode())
     while True:
         await asyncio.sleep(1)
 
