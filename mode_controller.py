@@ -1,6 +1,7 @@
 from modes.mode import Mode
 import asyncio
 from mode_change_strategy import ModeChangeStrategy, DefaultModeChangeStrategy
+from speed_change_strategy import SpeedChangeStrategy, DefaultSpeedChangeStrategy
 
 
 class ModeController:
@@ -9,7 +10,10 @@ class ModeController:
     task = None
 
     def __init__(
-        self, modes=None, mode_change_strategy: ModeChangeStrategy | None = None
+        self,
+        modes=None,
+        mode_change_strategy: ModeChangeStrategy | None = None,
+        speed_change_strategy: SpeedChangeStrategy | None = None,
     ):
         self.modes = modes if modes else {}
         self.mode_change_strategy = (
@@ -17,7 +21,24 @@ class ModeController:
             if mode_change_strategy
             else DefaultModeChangeStrategy()
         )
+        self.speed_change_strategy = (
+            speed_change_strategy
+            if speed_change_strategy
+            else DefaultSpeedChangeStrategy()
+        )
         self.select_mode(self.mode_index)
+
+    def change_speed(self, speed_index):
+        self.speed_change_strategy.change_speed(self, speed_index)
+
+    def next_speed(self):
+        self.speed_change_strategy.next_speed(self)
+
+    def previous_speed(self):
+        self.speed_change_strategy.previous_speed(self)
+
+    def set_own_speed(self, speed):
+        self.speed_change_strategy.set_own_speed(self, speed)
 
     def add_mode(self, mode_name, mode):
         self.modes[mode_name] = mode
