@@ -4,7 +4,7 @@ from utils import calc_pointer
 
 class Mode:
     task = None
-    speed: int = 1
+    speeds = [50, 25, 10, 5, 1]
     colors = {
         "red": (255, 0, 0),
         "green": (0, 255, 0),
@@ -17,14 +17,19 @@ class Mode:
     _current_color_name = "red"
     self_color_managing = False
 
-    def __init__(self, led_effect: Effect):
+    def __init__(self, led_effect: Effect, colors=None, speeds=None):
+        if colors:
+            self.colors = colors
+        if speeds:
+            self.speeds = speeds
+
         self.led_effect = led_effect
         self.color_names = list(self.colors.keys())
 
         self.speed = 1
 
     def run(self):
-        raise NotImplementedError("run() not implemented")
+        return self._loop(self.led_effect.run)
 
     @property
     def color(self):

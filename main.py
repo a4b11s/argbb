@@ -1,3 +1,5 @@
+from led_effects import pulse_effect
+from modes.mode import Mode
 from strip import strip
 import asyncio
 import utime
@@ -7,13 +9,17 @@ BUTTON_PIN_NUMBER = 16
 STRIP_PIN_NUMBER = 15
 NUM_LEDS = 60
 
-mode_controller = ModeController()
+mode_controller = ModeController(
+    modes={
+        "pulse": Mode(pulse_effect.PulseEffect(strip)),
+    }
+)
 
 
 async def change_mode():
     while True:
         await asyncio.sleep(4)
-        print("Changing mode")
+        print("Changing color")
         mode_controller.next_color()
 
 

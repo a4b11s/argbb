@@ -1,25 +1,21 @@
 from modes.mode import Mode
-from modes.filling_mode import FillingMode
-from modes.pulse_mode import PulseMode
-from modes.rainbow_pulse_mode import RainbowPulseMode
 import asyncio
 from utils import calc_pointer
 
 
 class ModeController:
-    modes = {
-        "filling": FillingMode,
-        "pulse": PulseMode,
-        "rainbow_pulse": RainbowPulseMode,
-    }
     selected_mode: Mode
     mode_pointer = 0
     task = None
 
     _color_pointer = 0
 
-    def __init__(self):
+    def __init__(self, modes=None):
+        self.modes = modes if modes else {}
         self.select_mode(self.mode_pointer)
+
+    def add_mode(self, mode_name, mode):
+        self.modes[mode_name] = mode
 
     def select_mode_by_name(self, mode_name):
         if mode_name in self.modes:
@@ -30,7 +26,7 @@ class ModeController:
 
     def select_mode(self, mode_pointer):
         self.mode_pointer = mode_pointer
-        self.selected_mode = self.modes[list(self.modes.keys())[self.mode_pointer]]()
+        self.selected_mode = self.modes[list(self.modes.keys())[self.mode_pointer]]
         self._on_mode_change()
 
     def next_mode(self):
