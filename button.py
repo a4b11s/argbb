@@ -1,6 +1,6 @@
 from machine import Pin
-import utime
 
+import utime
 import asyncio
 
 
@@ -12,32 +12,35 @@ class Button:
         self._has_been_pressed = False
         self._pressed_at = 0
         self._pressed_time = 0
-        self._last_pressed_time = 0
-        self._pressed_times_threshold = 300
+        self._released_at = 0
+        self._pressed_times_threshold = 500
 
     def _count_presses(self):
-        if self._last_pressed_time > self._pressed_times_threshold:
-            self._pressed_times = 0
-        else:
+        time_diff = utime.ticks_diff(utime.ticks_ms(), self._released_at)
+        if time_diff < self._pressed_times_threshold:
             self._pressed_times += 1
+        else:
+            self._pressed_times = 0
 
     @property
     def is_pressed_now(self):
         return self.button.value() == 0
 
+    async def run(self):
+        await self._loop()
+
     async def _loop(self):
         while True:
-            self._check()
+            await self._check()
             await asyncio.sleep(0)
 
-    def _check(self):
+    async def _check(self):
         if self.is_pressed_now and not self._has_been_pressed:
             self._on_press()
         elif not self.is_pressed_now and self._has_been_pressed:
             self._on_release()
 
     def _on_press(self):
-        self._last_pressed_time = self._pressed_time
         self._count_presses()
 
         self._pressed_time = 0
@@ -46,6 +49,8 @@ class Button:
         self._pressed_at = utime.ticks_ms()
 
     def _on_release(self):
+        self._has_been_pressed = False
         self._is_pressed = False
         self._pressed_time = utime.ticks_diff(utime.ticks_ms(), self._pressed_at)
+        self._released_at = utime.ticks_ms()
         self._pressed_at = 0
