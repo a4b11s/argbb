@@ -1,3 +1,4 @@
+import asyncio
 from led_effects.effect import Effect
 from utils import calc_pointer
 
@@ -63,6 +64,7 @@ class Mode:
         while True:
             self.task = coroutine(self.color, self.speed)
             await self.task
+            await asyncio.sleep(0)
             self._on_loop_iteration()
 
     def _on_loop_iteration(self):
