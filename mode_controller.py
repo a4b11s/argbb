@@ -33,9 +33,9 @@ class ModeController:
 
     async def run(self):
         while True:
-            await self.task()  # type: ignore
+            await self.task()  # type: ignore it works fine
 
     def _on_mode_change(self):
         if self.task:
-            self.task.cancel()
+            self.task.cancel() # type: ignore it works fine
         self.task = asyncio.create_task(self.selected_mode.run())

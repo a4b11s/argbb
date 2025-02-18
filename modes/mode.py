@@ -3,7 +3,6 @@ from led_effects.effect import Effect
 
 class Mode:
     task = None
-
     speed: int = 1
     colors = {
         "red": (255, 0, 0),
@@ -14,8 +13,8 @@ class Mode:
         "magenta": (255, 0, 255),
         "white": (255, 255, 255),
     }
-
     _current_color_name = "red"
+    self_color_managing = False
 
     def __init__(self, led_effect: Effect):
         self.led_effect = led_effect
@@ -49,6 +48,7 @@ class MonoColorMode(Mode):
 
 class MultiColorMode(Mode):
     _current_color_index = 0
+    self_color_managing = True
 
     def __init__(self, led_effect: Effect):
         super().__init__(led_effect)
