@@ -9,5 +9,4 @@ class RainbowPulseMode(MultiColorMode):
         self.speed = 25
 
     async def run(self):
-        args = [self.speed]
-        await self._loop(self.led_effect.run, args)
+        await self._loop(self.led_effect.run)
