@@ -1,6 +1,6 @@
 from modes.mode import Mode
 import asyncio
-from utils import calc_pointer
+from mode_change_strategy import ModeChangeStrategy, DefaultModeChangeStrategy
 
 
 class ModeController:
@@ -8,42 +8,34 @@ class ModeController:
     mode_index = 0
     task = None
 
-    _color_index = 0
-
-    def __init__(self, modes=None):
+    def __init__(
+        self, modes=None, mode_change_strategy: ModeChangeStrategy | None = None
+    ):
         self.modes = modes if modes else {}
+        self.mode_change_strategy = (
+            mode_change_strategy
+            if mode_change_strategy
+            else DefaultModeChangeStrategy()
+        )
         self.select_mode(self.mode_index)
 
     def add_mode(self, mode_name, mode):
         self.modes[mode_name] = mode
 
     def select_mode_by_name(self, mode_name):
-        if mode_name in self.modes:
-            mode_index = list(self.modes.keys()).index(mode_name)
-            self.select_mode(mode_index)
-        else:
-            raise ValueError(f"Mode '{mode_name}' not found in available modes.")
+        self.mode_change_strategy.select_mode_by_name(self, mode_name)
 
     def select_mode(self, mode_index):
-        self.mode_index = mode_index
-        self.selected_mode = self.modes[list(self.modes.keys())[self.mode_index]]
-        self._on_mode_change()
+        self.mode_change_strategy.change_mode(self, mode_index)
 
     def next_mode(self):
-        mode_index = calc_pointer(self.mode_index, 1, len(self.modes))
-        self.select_mode(mode_index)
+        self.mode_change_strategy.next_mode(self)
 
     def previous_mode(self):
-        mode_index = calc_pointer(self.mode_index, -1, len(self.modes))
-        self.select_mode(mode_index)
+        self.mode_change_strategy.previous_mode(self)
 
     def next_color(self):
-        if self.selected_mode.self_color_managing:
-            return
-        self._color_index = calc_pointer(
-            self._color_index, 1, len(self.selected_mode.color_names)
-        )
-        self.selected_mode.color = self.selected_mode.color_names[self._color_index]
+        self.mode_change_strategy.next_color(self)
 
     async def run(self):
         while True:
