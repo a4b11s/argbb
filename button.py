@@ -54,3 +54,12 @@ class Button:
         self._pressed_time = utime.ticks_diff(utime.ticks_ms(), self._pressed_at)
         self._released_at = utime.ticks_ms()
         self._pressed_at = 0
+
+    def _check_presses(self):
+        if self._pressed_times == 0:
+            if self._pressed_time < 1000:
+                return "short"
+            else:
+                return "long"
+        else:
+            return self._pressed_times + 1
