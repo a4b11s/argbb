@@ -1,4 +1,5 @@
-from led_effects import pulse_effect
+from app import App
+from led_effects import pulse_effect, filling_effect, fill_effect
 from modes.mode import Mode
 from strip import strip
 import asyncio
@@ -9,38 +10,20 @@ BUTTON_PIN_NUMBER = 16
 STRIP_PIN_NUMBER = 15
 NUM_LEDS = 60
 
-mode_controller = ModeController(
-    modes={
-        "pulse": Mode(pulse_effect.PulseEffect(strip)),
-    }
-)
+modes = {
+    "pulse": Mode(pulse_effect.PulseEffect(strip)),
+    "filling": Mode(filling_effect.FillingEffect(strip)),
+    "fill": Mode(fill_effect.FillEffect(strip)),
+}
 
+mode_controller = ModeController(modes)
 
-async def change_mode():
-    while True:
-        await asyncio.sleep(4)
-        print("Changing color")
-        mode_controller.next_color()
-
-
-async def work_emulator():
-    while True:
-        time = utime.ticks_ms()
-        await asyncio.sleep(1)
-        print(f"Work time: {utime.ticks_diff(utime.ticks_ms(), time)}")
-
-
-async def main():
-    asyncio.create_task(work_emulator())
-    asyncio.create_task(mode_controller.run())
-    asyncio.create_task(change_mode())
-    while True:
-        await asyncio.sleep(1)
+app = App(mode_controller)
 
 
 if __name__ == "__main__":
     strip.fill((0, 0, 0))
     strip.write()
 
-    utime.sleep_ms(500)
-    asyncio.run(main())
+    utime.sleep_ms(1000)
+    asyncio.run(app.run())
