@@ -27,6 +27,7 @@ class ModeController:
             else DefaultSpeedChangeStrategy()
         )
         self.select_mode(self.mode_index)
+        self.speed_change_strategy.change_speed(self, 0)
 
     def change_speed(self, speed_index):
         self.speed_change_strategy.change_speed(self, speed_index)

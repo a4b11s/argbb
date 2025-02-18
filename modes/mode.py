@@ -4,7 +4,7 @@ from utils import calc_pointer
 
 class Mode:
     task = None
-    speeds = [50, 25, 10, 5, 1]
+    speeds = [25, 10, 5, 1]
     colors = {
         "red": (255, 0, 0),
         "green": (0, 255, 0),
@@ -23,10 +23,10 @@ class Mode:
         if speeds:
             self.speeds = speeds
 
+        self._speed = self.speeds[0]
+
         self.led_effect = led_effect
         self.color_names = list(self.colors.keys())
-
-        self.speed = 1
 
     def run(self):
         return self._loop(self.led_effect.run)
@@ -39,6 +39,18 @@ class Mode:
     def color(self, color_name):
         self._current_color_name = color_name
         self._on_color_change()
+
+    @property
+    def speed(self):
+        return self._speed
+
+    @speed.setter
+    def speed(self, value):
+        self._speed = value
+        self._on_speed_change()
+
+    def _on_speed_change(self):
+        self._close_task()
 
     def _on_color_change(self):
         self._close_task()
