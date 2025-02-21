@@ -1,5 +1,4 @@
 from led_effects.effect import Effect
-import asyncio
 
 
 class PulseEffect(Effect):
