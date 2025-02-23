@@ -23,3 +23,7 @@ class Effect:
 
     async def _sleep(self, sleep_ms):
         await asyncio.sleep(sleep_ms / 1000)
+
+    def _calc_brightness(self, color, brightness):
+        br_percent = brightness / 100
+        return tuple(int(channel * br_percent) for channel in color)
