@@ -8,9 +8,8 @@ class WiFiSetup:
     def __init__(self, hostname: str):
         self.hostname = hostname
         self.page = self._setup_page()
-        self.ap = self.setup_wifi_spot(hostname)
+        self.ap = self.setup_wifi_access_point(hostname, "12345678")
         self.ap.active(True)
-        print("WiFi AP started")
 
     def _check_wifi(
         self, ssid: str, password: str, timeout: int = 20, interval: int = 1
@@ -38,14 +37,18 @@ class WiFiSetup:
         sta.active(True)
         wlans = sta.scan()
         sta.active(False)
-        sta.deinit()
         return wlans
 
-    def setup_wifi_spot(self, ssid: str):
+    def setup_wifi_access_point(self, ssid: str, password: str | None = None):
         ap = network.WLAN(network.AP_IF)
         ap.config(hostname=self.hostname)
         ap.config(essid=ssid)
         ap.config(security=0)
+
+        if password:
+            ap.config(password=password)
+            ap.config(security=2)
+
         return ap
 
     def host_server(self):
