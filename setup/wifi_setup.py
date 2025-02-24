@@ -7,7 +7,6 @@ from setup.setup_page import SetupPage
 class WiFiSetup:
     def __init__(self, hostname: str):
         self.hostname = hostname
-        self.page = self._setup_page()
         self.ap = self.setup_wifi_access_point(hostname)
         self.ap.active(True)
 
