@@ -1,57 +1,40 @@
 from app import App
-from led_effects.led_controller import LedController
-from machine import Pin
-
+from button import Button
+from led_effects import pulse_effect, filling_effect, fill_effect
+from modes.mode import Mode
+from strip import strip
+import asyncio
+import utime
 import machine
-import gc
+from mode_controller import ModeController
 
 BUTTON_PIN_NUMBER = 16
 STRIP_PIN_NUMBER = 15
 NUM_LEDS = 60
 
+modes = {
+    "pulse": Mode(pulse_effect.PulseEffect(strip)),
+    "filling": Mode(filling_effect.FillingEffect(strip)),
+    "fill": Mode(fill_effect.FillEffect(strip)),
+}
 
-def init():
-    global led_controller, button, app
+mode_controller = ModeController(modes)
 
-    led_controller = LedController(Pin(STRIP_PIN_NUMBER), NUM_LEDS)  # type: ignore
-    button = Pin(BUTTON_PIN_NUMBER, Pin.IN, Pin.PULL_UP)
+app = App(mode_controller)
 
-    app = App(led_controller, button)
-
-
-def off():
-    global led_controller, app, button
-    led_controller.fill((0, 0, 0))
-    led_controller.pixels.write()
-
-    del app, led_controller, button
-    gc.collect()
-    machine.Pin(BUTTON_PIN_NUMBER, machine.Pin.IN, machine.Pin.PULL_UP).irq(
-        trigger=Pin.IRQ_RISING,
-        handler=lambda pin: wake_up(),
-    )
-    machine.deepsleep()
+button = Button(machine.Pin(BUTTON_PIN_NUMBER, machine.Pin.IN, machine.Pin.PULL_UP))
 
 
-def wake_up():
-    global app, button
-    init()
-    button.irq(handler=None)
-    app = App(led_controller, button)
-    print("Woke up")
-    start()
-
-
-def start():
-    try:
-        app.run()
-    except Exception as e:
-        if str(e) == "OFF REQUESTED":
-            off()
-        else:
-            raise e
+async def main():
+    asyncio.create_task(app.mode_controller.run())
+    asyncio.create_task(button.run())
+    while True:
+        await asyncio.sleep(1)
 
 
 if __name__ == "__main__":
-    init()
-    start()
+    strip.fill((0, 0, 0))
+    strip.write()
+
+    utime.sleep_ms(1000)
+    asyncio.run(main())

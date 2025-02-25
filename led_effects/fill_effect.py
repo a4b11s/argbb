@@ -1,6 +1,7 @@
-from led_effects.base_effect import BaseEffect
+from led_effects.effect import Effect
 
 
-class FillEffect(BaseEffect):
-    def apply(self, color, *args, **kwargs):
-        self.controller.fill(color)
+class FillEffect(Effect):
+    async def run(self, color, sleep_ms):
+        self.strip.fill(color)
+        self.strip.write()
