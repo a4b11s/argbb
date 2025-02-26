@@ -18,8 +18,10 @@ class SetupPage:
         css = self._load_css()
 
         page = page.replace("{{CSS}}", f"<style>{css}</style>")
+
         options = "".join(
-            f"<option value='{item["ssid"]}'>{item["ssid"]}</option>"
+            f"<option value='{item if isinstance(item, str) else item['ssid']}'>"
+            f"{item if isinstance(item, str) else item['ssid']}</option>"
             for item in wifi_list
         )
 
