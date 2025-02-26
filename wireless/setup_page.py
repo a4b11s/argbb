@@ -1,5 +1,9 @@
 class SetupPage:
-    def __init__(self, path_to_html: str, path_to_css: str):
+    def __init__(
+        self,
+        path_to_html: str = "wireless/wifi_setup.html",
+        path_to_css: str = "wireless/wifi_setup.css",
+    ):
         self.path_to_html = path_to_html
         self.path_to_css = path_to_css
 

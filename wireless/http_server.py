@@ -1,3 +1,4 @@
+import asyncio
 import socket
 
 from wireless.body_parser import BodyParser
@@ -12,30 +13,40 @@ class HTTPServer:
     def add_route(self, path, handler):
         self.routes[path] = handler
 
-    def _await_connection(self, server):
-        conn, addr = server.accept()
-        print("Got a connection from %s" % str(addr))
-        request = conn.recv(1024)
-        request = parse_http(request)
-        return conn, request
+    async def _await_connection(self, server):
+        while True:
+            try:
+                conn, addr = server.accept()
+                print("Got a connection from %s" % str(addr))
+                return conn, addr
+            except Exception as e:
+                if "EAGAIN" not in str(e):
+                    raise e
+                await asyncio.sleep(0.01)
+                continue
 
-    def host_server(self):
+    async def host_server(self):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setblocking(False)
         conn = None
         try:
             addr = socket.getaddrinfo("0.0.0.0", 80)[0][-1]
+            print("Starting server on %s" % str(addr))
             server.bind(addr)
             server.listen(5)
             while True:
-                conn, request = self._await_connection(server)
+                conn, request = await self._await_connection(server)
+                request = conn.recv(1024)
+                request = parse_http(request)
                 response = self._process_request(request)
-
                 if response:
                     conn.sendall(response)
                 else:
                     conn.sendall(self.not_found())
 
                 conn.close()
+
+                await asyncio.sleep(0)
 
         except KeyboardInterrupt:
             print("Server stopped")
