@@ -23,10 +23,7 @@ class InputController:
         self.http_server = http_server
 
     async def run(self):
-        while True:
-            print("Running input controller")
-            await self.http_server.host_server()
-            await asyncio.sleep(1)
+        await self.http_server.host_server()
 
     def synchrony_setup(self):
         asyncio.run(self.setup())

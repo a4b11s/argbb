@@ -13,47 +13,22 @@ class HTTPServer:
     def add_route(self, path, handler):
         self.routes[path] = handler
 
-    async def _await_connection(self, server):
-        while True:
-            try:
-                conn, addr = server.accept()
-                print("Got a connection from %s" % str(addr))
-                return conn, addr
-            except Exception as e:
-                if "EAGAIN" not in str(e):
-                    raise e
-                await asyncio.sleep(0.01)
-                continue
-
-    async def host_server(self):
-        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.setblocking(False)
-        conn = None
+    async def handle_client(self, reader, writer):
         try:
-            addr = socket.getaddrinfo("0.0.0.0", 80)[0][-1]
-            print("Starting server on %s" % str(addr))
-            server.bind(addr)
-            server.listen(5)
-            while True:
-                conn, request = await self._await_connection(server)
-                request = conn.recv(1024)
+            request = await reader.read(1024)
+            if request:
                 request = parse_http(request)
                 response = self._process_request(request)
-                if response:
-                    conn.sendall(response)
-                else:
-                    conn.sendall(self.not_found())
-
-                conn.close()
-
-                await asyncio.sleep(0)
-
-        except KeyboardInterrupt:
-            print("Server stopped")
+                writer.write(response if response else self.not_found())
+                await writer.drain()
+        except Exception as e:
+            print("Error handling request:", e)
         finally:
-            server.close()
-            if conn:
-                conn.close()
+            writer.close()
+            await writer.wait_closed()
+
+    async def host_server(self):
+        await asyncio.start_server(self.handle_client, "0.0.0.0", 80)
 
     def _process_request(self, request):
         method, path, _, header, body = request
