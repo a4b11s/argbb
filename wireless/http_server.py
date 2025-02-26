@@ -45,7 +45,13 @@ class HTTPServer:
                 conn.close()
 
     def _process_request(self, request):
-        method, path, _, _, body = request
+        method, path, _, header, body = request
+
+        if body and "Content-Type" in header:
+            body = self.body_parser.parse(body, header["Content-Type"])
+        else:
+            body = {}
+
         if path in self.routes:
             return self.routes[path](method, body)
         return None
