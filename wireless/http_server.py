@@ -1,11 +1,13 @@
 import socket
 
+from wireless.body_parser import BodyParser
 from utils import make_http_response, parse_http
 
 
 class HTTPServer:
-    def __init__(self, routes={}) -> None:
+    def __init__(self, routes={}, body_parser: BodyParser | None = None) -> None:
         self.routes = routes
+        self.body_parser = body_parser or BodyParser()
 
     def add_route(self, path, handler):
         self.routes[path] = handler
@@ -26,7 +28,7 @@ class HTTPServer:
             server.listen(5)
             while True:
                 conn, request = self._await_connection(server)
-                response = self._proccess_request(request)
+                response = self._process_request(request)
 
                 if response:
                     conn.sendall(response)
@@ -42,7 +44,7 @@ class HTTPServer:
             if conn:
                 conn.close()
 
-    def _proccess_request(self, request):
+    def _process_request(self, request):
         method, path, _, _, body = request
         if path in self.routes:
             return self.routes[path](method, body)
