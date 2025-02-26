@@ -67,3 +67,7 @@ class HTTPServer:
     @staticmethod
     def not_found():
         return make_http_response(status_code=404)
+
+    @staticmethod
+    def bad_request():
+        return make_http_response(status_code=400)
