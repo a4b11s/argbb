@@ -33,10 +33,7 @@ class InputController:
         await self._setup_http_server()
 
     async def _setup_http_server(self):
-        self.http_server.add_route(
-            "/wifi",
-            self._callback_wrapper(self.set_wifi_credentials, ["ssid", "password"]),
-        )
+        self.http_server.add_route("/wifi", self.wifi_endpoint)
         self.http_server.add_route("/next_mode", self._callback_wrapper(self.next_mode))
         self.http_server.add_route(
             "/previous_mode", self._callback_wrapper(self.previous_mode)
@@ -50,7 +47,29 @@ class InputController:
         self.http_server.add_route(
             "/next_color", self._callback_wrapper(self.next_color)
         )
-        self.http_server.add_route("/", lambda method, body: "Hello World")
+
+        # TODO: temporary index page
+        index_page = """
+        <html>
+            <head>
+                <title>ARGbb</title>
+            </head>
+            <body>
+                <h1>ARGbb</h1>
+                <a href="/wifi">Wifi</a>
+                <button onclick="fetch('/next_mode', {method: 'POST'})">Next Mode</button>
+                <button onclick="fetch('/previous_mode', {method: 'POST'})">Previous Mode</button>
+                <hr>
+                <button onclick="fetch('/next_speed', {method: 'POST'})">Next Speed</button>
+                <button onclick="fetch('/previous_speed', {method: 'POST'})">Previous Speed</button>
+                <hr>
+                <button onclick="fetch('/next_color', {method: 'POST'})">Next Color</button>
+            </body>
+        </html>        
+        """
+
+        # TODO: temporary index page
+        self.http_server.add_route("/", lambda method, body: index_page)
 
     async def _setup_wifi(self):
         wifi_credentials = self.wifi_manager.load_credentials()
