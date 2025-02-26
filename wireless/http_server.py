@@ -33,7 +33,7 @@ class HTTPServer:
                 if response:
                     conn.sendall(response)
                 else:
-                    conn.sendall(make_http_response(status_code=404))
+                    conn.sendall(self.not_found())
 
                 conn.close()
 
@@ -55,3 +55,15 @@ class HTTPServer:
         if path in self.routes:
             return self.routes[path](method, body)
         return None
+
+    @staticmethod
+    def created(body):
+        return make_http_response(status_code=201, body=body)
+
+    @staticmethod
+    def ok(body):
+        return make_http_response(status_code=200, body=body)
+
+    @staticmethod
+    def not_found():
+        return make_http_response(status_code=404)
