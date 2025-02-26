@@ -1,13 +1,12 @@
 import network
 import utime
 
-from wireless.setup_page import SetupPage
-from wireless.http_server import HTTPServer
-
 
 class WiFiManager:
-    def __init__(self, hostname: str):
+    def __init__(self, hostname: str, cred_path: str):
+        self.cred_path = cred_path
         self.hostname = hostname
+
         self.ap = self.setup_wifi_access_point(hostname)
         self.sta = self.setup_wifi()
 
@@ -51,6 +50,19 @@ class WiFiManager:
         wlans = self._scan_wifi()
         ssids = self._parse_ssid(wlans)
         return ssids
+
+    def load_credentials(self):
+        try:
+            with open(self.cred_path, "r") as f:
+                credentials = f.read()
+                credentials = credentials.split("\n")
+                return {"ssid": credentials[0], "password": credentials[1]}
+        except OSError:
+            return None
+
+    def save_credentials(self, ssid: str, password: str):
+        with open(self.cred_path, "w") as f:
+            f.write(f"{ssid}\n{password}")
 
     @staticmethod
     def _parse_ssid(wlan_list):
