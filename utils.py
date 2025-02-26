@@ -12,7 +12,7 @@ def parse_http(http):
     first_line, *headers = parts[:-1]
     body = parts[-1]
     method, path, version = first_line.split(" ")
-    headers = [header for header in headers if header]
+    headers = parse_headers(headers)
 
     return method, path, version, headers, body
 
@@ -30,3 +30,9 @@ def make_http_response(status_code=200, headers=None, body=None, version="HTTP/1
     response += b"\r\n"
     response += body
     return response
+
+
+def parse_headers(headers):
+    headers = [header for header in headers if header]
+    headers = {header.split(": ")[0]: header.split(": ")[1] for header in headers}
+    return headers
