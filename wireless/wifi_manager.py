@@ -1,22 +1,30 @@
+import machine
 import network
 import utime
+import asyncio
 
 
 class WiFiManager:
-    def __init__(self, hostname: str, cred_path: str):
+    def __init__(self, hostname: str, cred_path: str, ap_ssid: str | None = None):
         self.cred_path = cred_path
         self.hostname = hostname
 
-        self.ap = self.setup_wifi_access_point(hostname)
+        if ap_ssid is None:
+            ap_ssid = machine.unique_id().hex()
+
+        print(f"AP SSID: {ap_ssid}")
+
+        self.ap = self.setup_wifi_access_point(ap_ssid)
         self.sta = self.setup_wifi()
 
     def setup_wifi(self):
         sta = network.WLAN(network.STA_IF)
+        sta.config(hostname=self.hostname)
+
         return sta
 
     def setup_wifi_access_point(self, ssid: str, password: str | None = None):
         ap = network.WLAN(network.AP_IF)
-        ap.config(hostname=self.hostname)
         ap.config(essid=ssid)
 
         if password is not None:
@@ -27,7 +35,10 @@ class WiFiManager:
 
         return ap
 
-    def connect_to_wifi(
+    def start_access_point(self):
+        self.ap.active(True)
+
+    async def connect_to_wifi(
         self, ssid: str, password: str, timeout: int = 20, interval: int = 1
     ):
         self.sta.active(True)
@@ -36,7 +47,7 @@ class WiFiManager:
         while not self.sta.isconnected():
             if utime.time() - start > timeout:
                 raise TimeoutError("Connection to WiFi timed out")
-            utime.sleep(interval)
+            await asyncio.sleep(interval)
 
         return self.sta.ipconfig()
 

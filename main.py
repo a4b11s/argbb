@@ -4,7 +4,9 @@ from modes.mode import Mode
 from strip import strip
 import asyncio
 import utime
-from mode_controller import ModeController
+from modes.mode_controller import ModeController
+
+from wireless.wifi_manager import WiFiManager
 
 BUTTON_PIN_NUMBER = 16
 STRIP_PIN_NUMBER = 15
@@ -18,10 +20,14 @@ modes = {
 }
 
 mode_controller = ModeController(modes)
+wifi_manager = WiFiManager("argbb.local", "wificred", "argbb")
+
+app = App(mode_controller, wifi_manager)
 mode_controller.select_mode_by_name("meteor")
 mode_controller.set_own_speed(10)
-app = App(mode_controller)
 
+async def setup():
+    asyncio.create_task(app.setup())
 
 async def mode_change():
     while True:
@@ -42,4 +48,5 @@ if __name__ == "__main__":
     strip.write()
 
     utime.sleep_ms(1000)
+    asyncio.run(setup())
     asyncio.run(main())
