@@ -22,7 +22,8 @@ def make_http_response(status_code=200, headers=None, body=None, version="HTTP/1
         headers = []
     if body is None:
         body = b""
-
+    if not isinstance(body, bytes):
+        body = str(body).encode()
     response = b""
     response += version.encode() + b" " + str(status_code).encode() + b"\r\n"
     for header in headers:
