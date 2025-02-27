@@ -3,12 +3,16 @@ import network
 import utime
 import asyncio
 
+from mdns_client import Client  # type: ignore
+from mdns_client.responder import Responder  # type: ignore
+
 
 class WiFiManager:
     def __init__(self, hostname: str, cred_path: str, ap_ssid: str | None = None):
         self.cred_path = cred_path
         self.hostname = hostname
 
+        network.hostname(hostname)
         if ap_ssid is None:
             ap_ssid = machine.unique_id().hex()
 
@@ -19,8 +23,6 @@ class WiFiManager:
 
     def setup_wifi(self):
         sta = network.WLAN(network.STA_IF)
-        sta.config(hostname=self.hostname)
-
         return sta
 
     def setup_wifi_access_point(self, ssid: str, password: str | None = None):
@@ -44,12 +46,25 @@ class WiFiManager:
         self.sta.active(True)
         self.sta.connect(ssid, password)
         start = utime.time()
+        print("Starting connection to WiFi...")
         while not self.sta.isconnected():
+            print("Connecting to WiFi...")
             if utime.time() - start > timeout:
                 raise TimeoutError("Connection to WiFi timed out")
             await asyncio.sleep(interval)
 
-        return self.sta.ipconfig()
+        await self._setup_mdns()
+
+    async def _setup_mdns(self):
+        own_ip_address = self.sta.ifconfig()[0]
+        client = Client(own_ip_address)
+        responder = Responder(
+            client,
+            own_ip=lambda: own_ip_address,
+            host=lambda: self.hostname,
+        )
+
+        responder.advertise("_argbb", "_tcp", 80)
 
     def _scan_wifi(self):
         if not self.sta.active():
