@@ -1,13 +1,12 @@
 import asyncio
-import socket
 
 from wireless.body_parser import BodyParser
 from utils import make_http_response, parse_http
 
 
 class HTTPServer:
-    def __init__(self, routes={}, body_parser: BodyParser | None = None) -> None:
-        self.routes = routes
+    def __init__(self, routes=None, body_parser: BodyParser | None = None) -> None:
+        self.routes = routes or {}
         self.body_parser = body_parser or BodyParser()
 
     def add_route(self, path, handler):
@@ -22,7 +21,8 @@ class HTTPServer:
                 writer.write(response if response else self.not_found())
                 await writer.drain()
         except Exception as e:
-            print("Error handling request:", e)
+            print("Error handling request:")
+            print(e)
         finally:
             writer.close()
             await writer.wait_closed()
