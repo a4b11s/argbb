@@ -52,17 +52,42 @@ class InputController:
         index_page = """
         <html>
             <head>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                }
+                Button {
+                    background-color: #4CAF50;
+                    border: none;
+                    color: white;
+                    padding: 15px 32px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 16px;
+                    margin: 4px 2px;
+                    cursor: pointer;
+                }
+                div {
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    border-top: 1px solid #000;
+                }
+            </style>
                 <title>ARGbb</title>
             </head>
             <body>
                 <h1>ARGbb</h1>
                 <a href="/wifi">Wifi</a>
+                <div>
                 <button onclick="fetch('/next_mode', {method: 'POST'})">Next Mode</button>
                 <button onclick="fetch('/previous_mode', {method: 'POST'})">Previous Mode</button>
-                <hr>
+                </div>
+                <div>
                 <button onclick="fetch('/next_speed', {method: 'POST'})">Next Speed</button>
                 <button onclick="fetch('/previous_speed', {method: 'POST'})">Previous Speed</button>
-                <hr>
+                </div>
                 <button onclick="fetch('/next_color', {method: 'POST'})">Next Color</button>
             </body>
         </html>        
@@ -78,7 +103,8 @@ class InputController:
                 await self.wifi_manager.connect_to_wifi(
                     wifi_credentials["ssid"], wifi_credentials["password"]
                 )
-            except TimeoutError:
+            except Exception as e:
+                print(f"Error connecting to wifi: {e}")
                 self.wifi_manager.start_access_point()
         else:
             self.wifi_manager.start_access_point()
