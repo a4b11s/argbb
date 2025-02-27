@@ -1,6 +1,6 @@
 from app import App
 from input_controller import InputController
-from led_effects import pulse_effect, filling_effect, fill_effect, meteor_effect
+from led_effects import pulse_effect, filling_effect, fill_effect, off_effect, meteor_effect
 from modes.mode import Mode
 from strip import strip
 import asyncio
@@ -15,6 +15,7 @@ STRIP_PIN_NUMBER = 15
 NUM_LEDS = 60
 
 modes = {
+    "off": Mode(off_effect.OffEffect(strip)),
     "meteor": Mode(meteor_effect.MeteorEffect(strip)),
     "pulse": Mode(pulse_effect.PulseEffect(strip)),
     "filling": Mode(filling_effect.FillingEffect(strip)),
@@ -22,7 +23,7 @@ modes = {
 }
 
 mode_controller = ModeController(modes)
-wifi_manager = WiFiManager("argbb.local", "wificred", "argbb")
+wifi_manager = WiFiManager("argbb", "wificred", "argbb")
 http_server = HTTPServer()
 input_controller = InputController(
     wifi_manager,
@@ -61,4 +62,4 @@ if __name__ == "__main__":
 
     utime.sleep_ms(1000)
     app.synchrony_setup()
-    asyncio.run(app.run())
+    asyncio.run(main())
