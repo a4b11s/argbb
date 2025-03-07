@@ -1,5 +1,7 @@
 # ARGBB Project
 
+[![wakatime](https://wakatime.com/badge/user/018ed2aa-e4fd-4336-bab8-464a091e41b7/project/8889d00d-fe2c-4e77-a79c-585d6f138f1a.svg)](https://wakatime.com/badge/user/018ed2aa-e4fd-4336-bab8-464a091e41b7/project/8889d00d-fe2c-4e77-a79c-585d6f138f1a)
+
 ## Overview
 
 The ARGBB project is a MicroPython-based application designed for the Raspberry Pi Pico W. It provides a web interface for configuring WiFi settings and controlling various LED effects on an RGB LED strip.
