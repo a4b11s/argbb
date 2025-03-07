@@ -69,7 +69,7 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 ## Known Issues
 
 - Application crashes when SSID is in Cyrillic
-- Issues with colors in long strings
+- Issues with colors in long strips
 - Slow response on mode change
 
 ## License
