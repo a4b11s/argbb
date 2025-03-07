@@ -1,5 +1,6 @@
 import asyncio
-from wireless import wifi_manager, http_server, setup_page
+from wireless import wifi_manager, http_server
+from web_ui.web_ui_controller import WebUIController
 
 
 class InputController:
@@ -21,6 +22,7 @@ class InputController:
 
         self.wifi_manager = wifi_manager
         self.http_server = http_server
+        self.web_ui_controller = WebUIController(http_server, self)
 
     async def run(self):
         await self.http_server.host_server()
@@ -30,71 +32,7 @@ class InputController:
 
     async def setup(self):
         await self._setup_wifi()
-        await self._setup_http_server()
-
-    async def _setup_http_server(self):
-        self.http_server.add_route("/wifi", self.wifi_endpoint)
-        self.http_server.add_route("/next_mode", self._callback_wrapper(self.next_mode))
-        self.http_server.add_route(
-            "/previous_mode", self._callback_wrapper(self.previous_mode)
-        )
-        self.http_server.add_route(
-            "/next_speed", self._callback_wrapper(self.next_speed)
-        )
-        self.http_server.add_route(
-            "/previous_speed", self._callback_wrapper(self.previous_speed)
-        )
-        self.http_server.add_route(
-            "/next_color", self._callback_wrapper(self.next_color)
-        )
-
-        # TODO: temporary index page
-        index_page = """
-        <html>
-            <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                }
-                Button {
-                    background-color: #4CAF50;
-                    border: none;
-                    color: white;
-                    padding: 15px 32px;
-                    text-align: center;
-                    text-decoration: none;
-                    display: inline-block;
-                    font-size: 16px;
-                    margin: 4px 2px;
-                    cursor: pointer;
-                }
-                div {
-                    width: 100%;
-                    display: flex;
-                    justify-content: center;
-                    border-top: 1px solid #000;
-                }
-            </style>
-                <title>ARGbb</title>
-            </head>
-            <body>
-                <h1>ARGbb</h1>
-                <a href="/wifi">Wifi</a>
-                <div>
-                <button onclick="fetch('/next_mode', {method: 'POST'})">Next Mode</button>
-                <button onclick="fetch('/previous_mode', {method: 'POST'})">Previous Mode</button>
-                </div>
-                <div>
-                <button onclick="fetch('/next_speed', {method: 'POST'})">Next Speed</button>
-                <button onclick="fetch('/previous_speed', {method: 'POST'})">Previous Speed</button>
-                </div>
-                <button onclick="fetch('/next_color', {method: 'POST'})">Next Color</button>
-            </body>
-        </html>        
-        """
-
-        # TODO: temporary index page
-        self.http_server.add_route("/", lambda method, body: index_page)
+        await self.web_ui_controller.setup_http_server()
 
     async def _setup_wifi(self):
         wifi_credentials = self.wifi_manager.load_credentials()
@@ -108,27 +46,6 @@ class InputController:
                 self.wifi_manager.start_access_point()
         else:
             self.wifi_manager.start_access_point()
-
-    def _callback_wrapper(self, callback, callback_args_keys=None):
-        def wrapper(method, body):
-            if method == "POST":
-                if callback_args_keys:
-                    callback_args = [body[key] for key in callback_args_keys]
-                    callback(callback_args)
-                else:
-                    callback()
-                return self.http_server.created({})
-            return self.http_server.not_found()
-
-        return wrapper
-
-    def wifi_endpoint(self, method, body):
-        if method == "POST":
-            self.set_wifi_credentials(body["ssid"], body["password"])
-            return self.http_server.created({"message": "Credentials saved"})
-        elif method == "GET":
-            return setup_page.SetupPage().render(self.wifi_manager.get_available_wifi())
-        return self.http_server.not_found
 
     def set_wifi_credentials(self, ssid, password):
         self.wifi_manager.save_credentials(ssid, password)
