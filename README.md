@@ -56,10 +56,6 @@ The ARGBB project is a MicroPython-based application designed for the Raspberry 
 
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.
 
-## License
-
-This project is licensed under the MIT License.
-
 ## Future Features
 
 - Enhanced web interface with more customization options
@@ -75,3 +71,7 @@ This project is licensed under the MIT License.
 - Application crashes when SSID is in Cyrillic
 - Issues with colors in long strings
 - Slow response on mode change
+
+## License
+
+This project is licensed under the MIT License.
