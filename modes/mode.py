@@ -51,14 +51,10 @@ class Mode:
         self._on_speed_change()
 
     def _on_speed_change(self):
-        self._close_task()
+        self.led_effect.set_sleep_ms(self.speed)
 
     def _on_color_change(self):
-        self._close_task()
-
-    def _close_task(self):
-        if self.task:
-            self.task.close()
+        self.led_effect.set_color(self.color)
 
     async def _loop(self, coroutine):
         while True:
