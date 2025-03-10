@@ -46,7 +46,7 @@ class WiFiManager:
         self.sta.active(True)
         self.sta.connect(ssid, password)
         start = utime.time()
-        print("Starting connection to WiFi...")
+        print(f"Starting connection to {ssid}...")
         while not self.sta.isconnected():
             print("Connecting to WiFi...")
             if utime.time() - start > timeout:
@@ -79,15 +79,15 @@ class WiFiManager:
 
     def load_credentials(self):
         try:
-            with open(self.cred_path, "r") as f:
-                credentials = f.read()
-                credentials = credentials.split("\n")
+            with open(self.cred_path, "r", encoding="utf-8") as f:  # Read with UTF-8 encoding
+                credentials = f.read().split("\n")
                 return {"ssid": credentials[0], "password": credentials[1]}
         except OSError:
             return None
 
     def save_credentials(self, ssid: str, password: str):
-        with open(self.cred_path, "w") as f:
+        print(f"Saving credentials: {ssid}, {password}")
+        with open(self.cred_path, "w", encoding="utf-8") as f:  # Write with UTF-8 encoding
             f.write(f"{ssid}\n{password}")
 
     @staticmethod

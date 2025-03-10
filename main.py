@@ -41,7 +41,6 @@ input_controller = InputController(
 )
 
 app = App(mode_controller, wifi_manager, input_controller)
-mode_controller.select_mode_by_name("rainbow_train")
 
 
 async def setup():
@@ -68,5 +67,6 @@ if __name__ == "__main__":
 
     utime.sleep_ms(1000)
     app.synchrony_setup()
-
+    mode_controller.select_mode_by_name("rainbow_train")
+    utime.sleep_ms(1000)
     asyncio.run(main())

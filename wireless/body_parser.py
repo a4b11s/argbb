@@ -7,10 +7,36 @@ class BodyParser:
             return self._parse_json(body)
         if content_type == "application/x-www-form-urlencoded":
             return self._parse_form(body)
-        return body
+        return body  # Return as is for unsupported content types
 
     def _parse_json(self, body):
-        return json.loads(body)
+        try:
+            return json.loads(body)
+        except:
+            return {"error": "Invalid JSON"}
 
     def _parse_form(self, body):
-        return {item.split("=")[0]: item.split("=")[1] for item in body.split("&")}
+        print(body)
+        try:
+            result = {}
+            for item in body.split("&"):
+                key_value = item.split("=")
+                if len(key_value) == 2:  # Ensure both key and value exist
+                    key = key_value[0]
+                    value = key_value[1]
+                    if key in result:
+                        if isinstance(result[key], list):
+                            result[key].append(value)
+                        else:
+                            result[key] = [result[key], value]
+                    else:
+                        result[key] = value
+                elif (
+                    len(key_value) == 1
+                ):  # Handle keys without values (e.g., "key1&key2=value")
+                    key = key_value[0]
+                    result[key] = None
+            return result
+        except Exception as e:
+            print(e)
+            return {"error": "Invalid form data"}

@@ -10,7 +10,7 @@
   <body>
     <div class="container">
       <h1>WiFi Setup</h1>
-      <form action="/wifi" method="post">
+      <form class="form" action="/wifi" method="post">
         <label for="ssid">SSID:</label>
         <select id="ssid" name="ssid">
           {{OPTIONS}}
@@ -21,4 +21,29 @@
       </form>
     </div>
   </body>
+  <script>
+    var ssid = document.getElementById('ssid');
+    var password = document.getElementById('password');
+    var form = document.querySelector('form');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+      fetch('/wifi', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ssid: ssid.value,
+          password: password.value
+        })
+      })
+      .then(function(response) {
+        if (response.ok) {
+          window.location.href = '/wifi';
+        } else {
+          alert('Error connecting to WiFi');
+        }
+      });
+    });
+  </script>
 </html>
