@@ -7,10 +7,12 @@ class TrainEffect(Effect):
         self.car_size = car_size
 
     async def _run(self):
-        for i in range(self.car_size):
-            self.strip.fill(self.color)
+        for shift in range(self.car_size + 1):
+            for i in range(len(self.strip)):
+                if (i - shift) % self.car_size == 0:
+                    self.strip[i] = (0, 0, 0)
+                else:
+                    self.strip[i] = self.color
             self.strip.write()
-            for j in range(0, len(self.strip), self.car_size):
-                self.strip[i + j] = (0, 0, 0)
-                self.strip.write()
+
             await self._sleep(self.sleep_ms)
