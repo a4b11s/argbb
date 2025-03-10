@@ -7,6 +7,10 @@ from led_effects import (
     off_effect,
     meteor_effect,
     rainbow_train_effect,
+    train_effect,
+    lightningbolt_effect,
+    snake_effect,
+    double_snake_effect,
 )
 from modes.mode import Mode
 from strip import strip
@@ -20,6 +24,10 @@ from wireless.wifi_manager import WiFiManager
 
 modes = {
     "off": Mode(off_effect.OffEffect(strip)),
+    "snake": Mode(snake_effect.SnakeEffect(strip)),
+    "double_snake": Mode(double_snake_effect.DoubleSnakeEffect(strip)),
+    "lightning": Mode(lightningbolt_effect.LightningBoltEffect(strip)),
+    "train": Mode(train_effect.TrainEffect(strip)),
     "rainbow_train": Mode(rainbow_train_effect.RainbowTrainEffect(strip)),
     "meteor": Mode(meteor_effect.MeteorEffect(strip)),
     "pulse": Mode(pulse_effect.PulseEffect(strip)),
@@ -65,8 +73,8 @@ if __name__ == "__main__":
     strip.fill((255, 0, 0))
     strip.write()
 
-    utime.sleep_ms(1000)
+    utime.sleep_ms(2000)
     app.synchrony_setup()
-    mode_controller.select_mode_by_name("rainbow_train")
     utime.sleep_ms(1000)
+    mode_controller.select_mode_by_name("double_snake")
     asyncio.run(main())
