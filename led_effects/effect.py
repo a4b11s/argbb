@@ -17,8 +17,23 @@ class IStrip(neopixel.NeoPixel):
 class Effect:
     def __init__(self, strip):
         self.strip: IStrip = strip
+        self.color = (0, 0, 0)
+        self.sleep_ms = 50
+        self.color_has_changed = False
+
+    def set_color(self, color):
+        self.color = color
+        self.color_has_changed = True
+
+    def set_sleep_ms(self, sleep_ms):
+        self.sleep_ms = sleep_ms
 
     async def run(self, color, sleep_ms):
+        self.set_color(color)
+        self.set_sleep_ms(sleep_ms)
+        await self._run()
+
+    async def _run(self):
         raise NotImplementedError("run() method must be implemented in subclass")
 
     async def _sleep(self, sleep_ms):

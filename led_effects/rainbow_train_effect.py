@@ -2,7 +2,7 @@ from led_effects.effect import Effect
 
 
 class RainbowTrainEffect(Effect):
-    async def run(self, color, sleep_ms):
+    async def _run(self):
         i = 0
         while True:
             rainbow = self._generate_rainbow(len(self.strip), i)
@@ -10,7 +10,7 @@ class RainbowTrainEffect(Effect):
             for j, color in enumerate(rainbow):
                 self.strip[j] = color
             self.strip.write()
-            await self._sleep(sleep_ms)
+            await self._sleep(self.sleep_ms)
 
     def _generate_rainbow(self, length, shift=0):
         rainbow = []

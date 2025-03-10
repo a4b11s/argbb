@@ -2,6 +2,6 @@ from led_effects.effect import Effect
 
 
 class FillEffect(Effect):
-    async def run(self, color, sleep_ms):
-        self.strip.fill(color)
+    async def _run(self):
+        self.strip.fill(self.color)
         self.strip.write()
