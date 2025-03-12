@@ -1,4 +1,5 @@
 import asyncio
+import sys
 
 from wireless.body_parser import BodyParser
 from utils import make_http_response, parse_http
@@ -22,7 +23,8 @@ class HTTPServer:
                 await writer.drain()
         except Exception as e:
             print("Error handling request:")
-            print(e)
+            sys.print_exception(e) # type: ignore
+            print("Request:", request)
         finally:
             writer.close()
             await writer.wait_closed()

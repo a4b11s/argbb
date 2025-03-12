@@ -14,12 +14,14 @@ class InputController:
         next_speed_callback=None,
         previous_speed_callback=None,
         next_color_callback=None,
+        set_speed_callback=None,
     ):
         self.next_mode_callback = next_mode_callback
         self.previous_mode_callback = previous_mode_callback
         self.next_speed_callback = next_speed_callback
         self.previous_speed_callback = previous_speed_callback
         self.next_color_callback = next_color_callback
+        self.set_speed_callback = set_speed_callback
 
         self.wifi_manager = wifi_manager
         self.http_server = http_server
@@ -70,3 +72,12 @@ class InputController:
     def next_color(self):
         if self.next_color_callback:
             self.next_color_callback()
+
+    def set_speed(self, speed):
+        if not isinstance(speed, int):
+            try:
+                speed = int(speed)
+            except ValueError:
+                return
+        if self.set_speed_callback:
+            self.set_speed_callback(speed / 10)
