@@ -67,6 +67,7 @@ Contributions are welcome! Please open an issue or submit a pull request on GitH
 - Master/slave interface for multiple controllers sync
 - Custom modes
 - Custom speed and color in web UI
+- Add ota updates
 
 ## Known Issues
 
