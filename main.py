@@ -1,3 +1,4 @@
+import json
 from app import App
 from input_controller import InputController
 from led_effects import (
@@ -13,13 +14,59 @@ from led_effects import (
     double_snake_effect,
 )
 from modes.mode import Mode
-from strip import strip
 import asyncio
 import utime
+import neopixel
+import machine
+from config import config
 from modes.mode_controller import ModeController
 
 from wireless.http_server import HTTPServer
 from wireless.wifi_manager import WiFiManager
+
+
+strip_pin = int(config.get("led_pin"))  # type: ignore
+strip_num_leds = int(config.get("num_leds"))  # type: ignore
+name = str(config.get("name", "argbb"))
+
+strip = neopixel.NeoPixel(machine.Pin(strip_pin), strip_num_leds)
+
+
+def update():
+    from ota.ota_updater import OTAUpdater
+    import gc
+
+    try:
+        import rp2
+
+        rp2.PIO(0).remove_program()
+        rp2.PIO(1).remove_program()
+        print("PIO programs removed")
+    except Exception as e:
+        if e != "Module not found":
+            print(f"Error removing PIO programs: {e}")
+
+    gc.collect()
+    print("Updating firmware...")
+    otaUpdater = OTAUpdater(
+        "https://github.com/a4b11s/argbb",
+        main_dir="/",
+        exclude_files=["wificred", "/", "config.json"],
+    )
+
+    otaUpdater.install_update_if_available()
+    del otaUpdater
+    machine.reset()
+
+
+def set_config(data):
+    if not isinstance(data, dict):
+        data = json.loads(data)
+
+    for key, value in data.items():
+        config.set(key, value)
+
+    machine.reset()
 
 
 modes = {
@@ -36,7 +83,7 @@ modes = {
 }
 
 mode_controller = ModeController(modes)
-wifi_manager = WiFiManager("argbb", "wificred", "argbb")
+wifi_manager = WiFiManager(name, "wificred")
 http_server = HTTPServer()
 input_controller = InputController(
     wifi_manager,
@@ -46,6 +93,9 @@ input_controller = InputController(
     mode_controller.next_speed,
     mode_controller.previous_speed,
     mode_controller.next_color,
+    mode_controller.set_own_speed,
+    update,
+    set_config,
 )
 
 app = App(mode_controller, wifi_manager, input_controller)
@@ -76,5 +126,5 @@ if __name__ == "__main__":
     utime.sleep_ms(2000)
     app.synchrony_setup()
     utime.sleep_ms(1000)
-    mode_controller.select_mode_by_name("double_snake")
+    mode_controller.select_mode_by_name("rainbow_train")
     asyncio.run(main())

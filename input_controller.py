@@ -15,6 +15,8 @@ class InputController:
         previous_speed_callback=None,
         next_color_callback=None,
         set_speed_callback=None,
+        update_callback=None,
+        set_config_callback=None,
     ):
         self.next_mode_callback = next_mode_callback
         self.previous_mode_callback = previous_mode_callback
@@ -25,6 +27,8 @@ class InputController:
 
         self.wifi_manager = wifi_manager
         self.http_server = http_server
+        self.update_callback = update_callback
+        self.set_config_callback = set_config_callback
         self.web_ui_controller = WebUIController(http_server, self)
 
     async def run(self):
@@ -81,3 +85,11 @@ class InputController:
                 return
         if self.set_speed_callback:
             self.set_speed_callback(speed / 10)
+
+    def update(self):
+        if self.update_callback:
+            self.update_callback()
+
+    def set_config(self, data):
+        if self.set_config_callback:
+            self.set_config_callback(data)

@@ -8,13 +8,12 @@ from mdns_client.responder import Responder  # type: ignore
 
 
 class WiFiManager:
-    def __init__(self, hostname: str, cred_path: str, ap_ssid: str | None = None):
+    def __init__(self, hostname: str, cred_path: str):
         self.cred_path = cred_path
         self.hostname = hostname
 
         network.hostname(hostname)
-        if ap_ssid is None:
-            ap_ssid = machine.unique_id().hex()
+        ap_ssid = hostname or machine.unique_id().hex()
 
         print(f"AP SSID: {ap_ssid}")
 
@@ -79,7 +78,9 @@ class WiFiManager:
 
     def load_credentials(self):
         try:
-            with open(self.cred_path, "r", encoding="utf-8") as f:  # Read with UTF-8 encoding
+            with open(
+                self.cred_path, "r", encoding="utf-8"
+            ) as f:  # Read with UTF-8 encoding
                 credentials = f.read().split("\n")
                 return {"ssid": credentials[0], "password": credentials[1]}
         except OSError:
@@ -87,7 +88,9 @@ class WiFiManager:
 
     def save_credentials(self, ssid: str, password: str):
         print(f"Saving credentials: {ssid}, {password}")
-        with open(self.cred_path, "w", encoding="utf-8") as f:  # Write with UTF-8 encoding
+        with open(
+            self.cred_path, "w", encoding="utf-8"
+        ) as f:  # Write with UTF-8 encoding
             f.write(f"{ssid}\n{password}")
 
     @staticmethod

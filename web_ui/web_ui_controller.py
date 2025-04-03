@@ -29,6 +29,14 @@ class WebUIController:
             "/set_speed",
             self._callback_wrapper(self.input_controller.set_speed, ["speed"]),
         )
+        self.http_server.add_route(
+            "/update",
+            self._callback_wrapper(self.input_controller.update),
+        )
+        self.http_server.add_route(
+            "/set_config",
+            self._callback_wrapper(self.input_controller.set_config, ["data"]),
+        )
 
         index_page = """
         <html>
@@ -66,6 +74,11 @@ class WebUIController:
                     -webkit-transition: .2s;
                     transition: opacity .2s;
                 }
+                h2 {
+                    text-align: center;
+                    font-size: 20px;
+                    width: 100%;
+                }
             </style>
                 <title>ARGbb</title>
             </head>
@@ -86,6 +99,25 @@ class WebUIController:
                 <button onclick="fetch('/previous_speed', {method: 'POST'})">Previous Speed</button>
                 </div>
                 <button onclick="fetch('/next_color', {method: 'POST'})">Next Color</button>
+                <button onclick="fetch('/update', {method: 'POST'})">Update</button>
+                
+                <div>
+                <h2>Set Config ITS RESET!!!!!!</h2>
+                </div>
+                
+                <div>
+                <label>name:
+                <input type="text" id="name" value="argbb">
+                </label>
+                <label>led pin:
+                <input type="text" id="led_pin" value="15">
+                </label>
+                <label>num leds:
+                <input type="text" id="num_leds" value="60">
+                </label>
+                <button onclick="fetch('/set_config', {method: 'POST', headers: {'Content-Type': 'application/json' }, body: JSON.stringify({data:{led_pin: document.getElementById('led_pin').value, num_leds: document.getElementById('num_leds').value, name: document.getElementById('name').value}})})">Set Config</button>
+                </div>
+                
             </body>
         </html>        
         """
