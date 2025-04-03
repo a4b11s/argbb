@@ -46,6 +46,10 @@ The ARGBB project is a MicroPython-based application designed for the Raspberry 
 5. **Run the application:**
    - Open a terminal or Thonny and run the `main.py` script.
 
+## Acknowledgments
+
+This project uses a modified version of the [micropython-ota-updater](https://github.com/rdehuyss/micropython-ota-updater) for over-the-air updates.
+
 ## Usage
 
 ### Web Interface
