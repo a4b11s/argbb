@@ -40,5 +40,11 @@ class Effect:
         await asyncio.sleep(sleep_ms / 1000)
 
     def _calc_brightness(self, color, brightness):
+        """
+        Calculate the brightness of a color.
+        :param color: The RGB color tuple.
+        :param brightness: The brightness percentage (0-100).
+        :return: The adjusted RGB color tuple.
+        """
         br_percent = brightness / 100
         return tuple(int(channel * br_percent) for channel in color)
