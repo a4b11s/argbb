@@ -73,6 +73,7 @@ def set_config(data):
 modes = {
     "off": Mode(off_effect.OffEffect(strip)),
     "pixel_madness": Mode(pixel_madness_effect.PixelMadnessEffect(strip)),
+    "pixel_madness_bi": Mode(pixel_madness_effect.PixelMadnessBiDirectEffect(strip)),
     "snake": Mode(snake_effect.SnakeEffect(strip)),
     "double_snake": Mode(double_snake_effect.DoubleSnakeEffect(strip)),
     "lightning": Mode(lightningbolt_effect.LightningBoltEffect(strip)),
@@ -128,6 +129,6 @@ if __name__ == "__main__":
     utime.sleep_ms(2000)
     app.synchrony_setup()
     utime.sleep_ms(1000)
-    mode_controller.select_mode_by_name("pixel_madness")
+    mode_controller.select_mode_by_name("pixel_madness_bi")
     mode_controller.set_own_speed(50)
     asyncio.run(main())
