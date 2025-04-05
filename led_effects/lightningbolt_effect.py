@@ -64,5 +64,5 @@ class LightningBoltEffect(Effect):
 
     def get_random_brightness(self):
         return self._calc_brightness(
-            self.color, random.randint(self.min_brightness, self.max_brightness)
+            self.color, random.randint(self.min_brightness, self.max_brightness) / 100
         )
