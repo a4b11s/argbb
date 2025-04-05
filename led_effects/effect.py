@@ -43,7 +43,7 @@ class Effect:
         """
         Calculate the brightness of a color.
         :param color: The RGB color tuple.
-        :param brightness: The brightness percentage (0-100).
+        :param brightness: The brightness percentage (0-100) oro (0-1).
         :return: The adjusted RGB color tuple.
         """
         br_percent = brightness / 100
