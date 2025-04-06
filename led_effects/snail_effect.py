@@ -16,10 +16,7 @@ class SnailEffect(Effect):
                     continue
                 self.strip[index] = self.color
 
-            for j in range(0, i - self.tail_length):
-                index = j
-                if index >= len(self.strip):
-                    continue
-                self.strip[index] = self._calc_brightness(self.color, 0.05)
+            self.strip[i - self.tail_length] = self._calc_brightness(self.color, 0.05)
+
             self.strip.write()
             await self._sleep(self.sleep_ms)
