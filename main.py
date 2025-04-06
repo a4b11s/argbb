@@ -14,6 +14,7 @@ from led_effects import (
     double_snake_effect,
     pixel_madness_effect,
     snail_effect,
+    interpol_effect,
 )
 from modes.mode import Mode
 import asyncio
@@ -73,6 +74,7 @@ def set_config(data):
 
 modes = {
     "off": Mode(off_effect.OffEffect(strip)),
+    "interpol": Mode(interpol_effect.InterpolEffect(strip)),
     "snail": Mode(snail_effect.SnailEffect(strip)),
     "pixel_madness": Mode(pixel_madness_effect.PixelMadnessEffect(strip)),
     "pixel_madness_bi": Mode(pixel_madness_effect.PixelMadnessBiDirectEffect(strip)),
@@ -131,5 +133,5 @@ if __name__ == "__main__":
     utime.sleep_ms(2000)
     app.synchrony_setup()
     utime.sleep_ms(1000)
-    mode_controller.select_mode_by_name("snail")
+    mode_controller.select_mode_by_name("interpol")
     asyncio.run(main())
