@@ -1,10 +1,15 @@
 from wireless import setup_page
+from web_ui.html_preprocessor import HTMLPreprocessor
+from config import config
 
 
 class WebUIController:
     def __init__(self, http_server, input_controller):
         self.http_server = http_server
         self.input_controller = input_controller
+
+        self.index_page = HTMLPreprocessor.from_file("/web_ui/pages/index.html")
+        self.setting_page = HTMLPreprocessor.from_file("/web_ui/pages/settings.html")
 
     async def setup_http_server(self):
         self.http_server.add_route("/wifi", self.wifi_endpoint)
@@ -26,6 +31,10 @@ class WebUIController:
             "/next_color", self._callback_wrapper(self.input_controller.next_color)
         )
         self.http_server.add_route(
+            "/previous_color",
+            self._callback_wrapper(self.input_controller.previous_color),
+        )
+        self.http_server.add_route(
             "/set_speed",
             self._callback_wrapper(self.input_controller.set_speed, ["speed"]),
         )
@@ -38,90 +47,29 @@ class WebUIController:
             self._callback_wrapper(self.input_controller.set_config, ["data"]),
         )
 
-        index_page = """
-        <html>
-            <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                }
-                Button {
-                    background-color: #4CAF50;
-                    border: none;
-                    color: white;
-                    padding: 15px 32px;
-                    text-align: center;
-                    text-decoration: none;
-                    display: inline-block;
-                    font-size: 16px;
-                    margin: 4px 2px;
-                    cursor: pointer;
-                }
-                div {
-                    width: 100%;
-                    display: flex;
-                    justify-content: center;
-                    border-top: 1px solid #000;
-                    padding: 22px;
-                }
-                .slider {
-                    -webkit-appearance: none;
-                    width: 100%;
-                    height: 25px;
-                    background: #d3d3d3;
-                    outline: none;
-                    opacity: 0.7;
-                    -webkit-transition: .2s;
-                    transition: opacity .2s;
-                }
-                h2 {
-                    text-align: center;
-                    font-size: 20px;
-                    width: 100%;
-                }
-            </style>
-                <title>ARGbb</title>
-            </head>
-            <body>
-                <h1>ARGbb</h1>
-                <a href="/wifi">Wifi</a>
-                <div>
-                <label>Speed:
-                <input type="range" min=1" max="2500" value="1250" class="slider" id="speed" onchange="fetch('/set_speed',{method: 'POST',headers: {'Content-Type': 'application/json' }, body: JSON.stringify({speed: this.value})})">
-                </label>
-                </div>
-                <div>
-                <button onclick="fetch('/next_mode', {method: 'POST'})">Next Mode</button>
-                <button onclick="fetch('/previous_mode', {method: 'POST'})">Previous Mode</button>
-                </div>
-                <div>
-                <button onclick="fetch('/next_speed', {method: 'POST'})">Next Speed</button>
-                <button onclick="fetch('/previous_speed', {method: 'POST'})">Previous Speed</button>
-                </div>
-                <button onclick="fetch('/next_color', {method: 'POST'})">Next Color</button>
-                <button onclick="fetch('/update', {method: 'POST'})">Update</button>
-                
-                <div>
-                <h2>Set Config ITS RESET!!!!!!</h2>
-                </div>
-                
-                <div>
-                <label>name:
-                <input type="text" id="name" value="argbb">
-                </label>
-                <label>led pin:
-                <input type="text" id="led_pin" value="15">
-                </label>
-                <label>num leds:
-                <input type="text" id="num_leds" value="60">
-                </label>
-                <button onclick="fetch('/set_config', {method: 'POST', headers: {'Content-Type': 'application/json' }, body: JSON.stringify({data:{led_pin: document.getElementById('led_pin').value, num_leds: document.getElementById('num_leds').value, name: document.getElementById('name').value}})})">Set Config</button>
-                </div>
-                
-            </body>
-        </html>        
-        """
+        self.http_server.add_route(
+            "/set_mode",
+            self._callback_wrapper(self.input_controller.set_mode, ["mode"]),
+        )
+
+        index_page = self.index_page.render(
+            {
+                "title": config.get("name"),
+                "modes": self.input_controller.mode_controller.modes.keys(),
+            }
+        )
+        
+        setting_page = self.setting_page.render(
+            {
+                "name": config.get("name"),
+                "led_pin": config.get("led_pin"),
+                "num_leds": config.get("num_leds"),
+            }
+        )
         self.http_server.add_route("/", lambda method, body: index_page)
+        self.http_server.add_route(
+            "/settings", lambda method, body: setting_page
+        )
 
     def _callback_wrapper(self, callback, callback_args_keys=None):
         def wrapper(method, body):

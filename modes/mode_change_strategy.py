@@ -20,6 +20,8 @@ class ModeChangeStrategy:
     def next_color(self, controller):
         raise NotImplementedError
 
+    def previous_color(self, controller):
+        raise NotImplementedError
 
 class DefaultModeChangeStrategy(ModeChangeStrategy):
     def change_mode(self, controller, mode_index):
@@ -49,6 +51,16 @@ class DefaultModeChangeStrategy(ModeChangeStrategy):
             return
         self._color_index = calc_pointer(
             self._color_index, 1, len(controller.selected_mode.color_names)
+        )
+        controller.selected_mode.color = controller.selected_mode.color_names[
+            self._color_index
+        ]
+
+    def previous_color(self, controller):
+        if controller.selected_mode.self_color_managing:
+            return
+        self._color_index = calc_pointer(
+            self._color_index, -1, len(controller.selected_mode.color_names)
         )
         controller.selected_mode.color = controller.selected_mode.color_names[
             self._color_index

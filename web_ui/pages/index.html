@@ -1,1 +1,44 @@
-<h1>{{ var }}</h1>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> {{ title }} </title>
+    <style>
+      {% include "/web_ui/pages/index.css" %}
+    </style>
+  </head>
+  <body>
+    <h1>WS2812B Control</h1>
+
+    <!-- Scrollable Modes -->
+    <div class="modes-scroll">
+      <div class="modes-container">
+        {% for item in modes %}
+        <button class="mode-btn" id="{% item %}"> {% item %}</button>
+        {% endfor %}
+    </div>
+    </div>
+
+    <!-- Color Controls -->
+    <div class="color-controls">
+      <button id="prev-color">Prev Color</button>
+      <button id="next-color">Next Color</button>
+    </div>
+
+    <!-- Speed Controls -->
+    <div class="slider-container">
+      <div class="speed-buttons">
+        <button id="speed-down">Slower</button>
+        <button id="speed-up">Faster</button>
+      </div>
+      <input id="speed-progress" type="range" min="0" max="1000" value="50" />
+    </div>
+
+    <!-- Settings Link -->
+    <a href="/settings" class="settings-link">Settings</a>
+  </body>
+  <script>
+    {% include "/web_ui/pages/main.js" %}
+  </script>
+</html>

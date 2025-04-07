@@ -7,6 +7,7 @@ from web_ui.web_ui_controller import WebUIController
 class InputController:
     def __init__(
         self,
+        mode_controller,
         wifi_manager: wifi_manager.WiFiManager,
         http_server: http_server.HTTPServer,
         next_mode_callback=None,
@@ -14,15 +15,18 @@ class InputController:
         next_speed_callback=None,
         previous_speed_callback=None,
         next_color_callback=None,
+        previous_color_callback=None,
         set_speed_callback=None,
         update_callback=None,
         set_config_callback=None,
     ):
+        self.mode_controller = mode_controller
         self.next_mode_callback = next_mode_callback
         self.previous_mode_callback = previous_mode_callback
         self.next_speed_callback = next_speed_callback
         self.previous_speed_callback = previous_speed_callback
         self.next_color_callback = next_color_callback
+        self.previous_color_callback = previous_color_callback
         self.set_speed_callback = set_speed_callback
 
         self.wifi_manager = wifi_manager
@@ -73,6 +77,10 @@ class InputController:
         if self.previous_speed_callback:
             self.previous_speed_callback()
 
+    def previous_color(self):
+        if self.previous_color_callback:
+            self.previous_color_callback()
+
     def next_color(self):
         if self.next_color_callback:
             self.next_color_callback()
@@ -93,3 +101,6 @@ class InputController:
     def set_config(self, data):
         if self.set_config_callback:
             self.set_config_callback(data)
+
+    def set_mode(self, mode):
+        self.mode_controller.select_mode_by_name(mode)
