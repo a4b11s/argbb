@@ -35,7 +35,7 @@ class StarsEffect(Effect):
         for i in range(strip_length):
             if random.randint(0, 100) < 50:
                 continue
-            pixels[i] = self._calc_brightness(self.color, random.randint(0, 100))
+            pixels[i] = self._calc_brightness(self.color, random.random()) # type: ignore
         self._update_strip(pixels)
 
         while True:
@@ -45,7 +45,7 @@ class StarsEffect(Effect):
             if random.randint(0, 100) < 60:
                 index = random.randint(0, strip_length - 1)
                 new_pixel = self._calc_brightness(self.color, random.randint(50, 100))
-                pixels[index] = new_pixel
+                pixels[index] = new_pixel # type: ignore
 
             self._apply_fade_effect(pixels)
             self._update_strip(pixels)
@@ -53,7 +53,7 @@ class StarsEffect(Effect):
             await self._sleep(self.sleep_ms)
 
     def _apply_fade_effect(self, pixels):
-        fade_factor = self.fade_factor * 100
+        fade_factor = self.fade_factor
         for j in range(len(pixels)):
             
             if random.randint(0, 100) < 20:
