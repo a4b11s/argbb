@@ -31,7 +31,7 @@ class HTMLPreprocessor:
         # Handle loops
         rendered_str = self._handle_loops(rendered_str, context)
         # Minify HTML
-        rendered_str = self._minify_html(rendered_str)
+        # rendered_str = self._minify_html(rendered_str)
 
         return rendered_str
 
@@ -84,16 +84,21 @@ class HTMLPreprocessor:
                 r"{%\s+for\s+(.+?)\s+in\s+" + for_obj + r"\s+%}"
             )
             end_placeholder = ure.compile(r"{%\s+endfor\s+%}")
-
             if start_placeholder.search(template):
                 loop_body = template[
                     start_placeholder.search(template)
                     .end() : end_placeholder.search(template)
                     .start()
                 ]
+                processed_loop_body = []
+
                 for item in context[for_obj]:
-                    proceed_loop_body = loop_body.replace("{% item %}", str(item))
-                    template = template.replace(loop_body, proceed_loop_body)
+                    processed_loop_body.append(
+                        loop_body.replace("{% item %}", str(item))
+                    )
+
+                processed_loop_body = "".join(processed_loop_body)
+                template = template.replace(loop_body, processed_loop_body)
 
                 template = template.replace(
                     start_placeholder.search(template).group(0), ""
