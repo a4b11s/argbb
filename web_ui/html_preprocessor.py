@@ -9,6 +9,7 @@ class HTMLPreprocessor:
     - {{ variable }} syntax for dynamic content
     - {% if condition %} ... {% endif %} for conditional rendering
     - {% for item in list %} ... {% endfor %} for looping through lists
+    - {% include "path/to/file %} for including other files
     """
 
     def __init__(self, template_str: str):
@@ -21,6 +22,8 @@ class HTMLPreprocessor:
         :return: The rendered HTML string.
         """
         rendered_str = self.template_str
+        # Include other files
+        rendered_str = self._include_file(rendered_str)
         # Replace variables
         rendered_str = self._replace_variables(rendered_str, context)
         # Handle conditional rendering
@@ -31,6 +34,29 @@ class HTMLPreprocessor:
         rendered_str = self._minify_html(rendered_str)
 
         return rendered_str
+
+    def _include_file(self, template: str) -> str:
+        """
+        Helper function to include other files in the template.
+        :param template: The template string.
+        :param context: The context dictionary.
+        :return: The template string with included files.
+        """
+        include_placeholder = ure.compile(r"{%\s+include\s+\"(.+?)\"\s+%}")
+
+        while include_placeholder.search(template):
+            file_name = include_placeholder.search(template).group(1)
+            try:
+                with open(file_name, "r") as file:
+                    included_content = file.read()
+            except Exception as e:
+                print(f"Error including file {file_name}: {e}")
+                included_content = "Error including file"
+            template = template.replace(
+                include_placeholder.search(template).group(0), included_content
+            )
+
+        return template
 
     def _minify_html(self, html: str) -> str:
         """
@@ -115,3 +141,44 @@ class HTMLPreprocessor:
                 template = template.replace(placeholder, str(value))
 
         return template
+
+
+if __name__ == "__main__":
+    template_str = """
+    <html>
+        <head>
+            <title>{{ title }}</title>
+            <style>
+                {% include "/web_ui/pages/index.css" %}
+            </style>
+        </head>
+        <body>
+        {{ some_variable }}
+            {% if condition %}
+                <h1>{{ header }}</h1>
+            {% endif %}
+            <ul>
+                {% for item in items %}
+                    <li>{% item %}</li>
+                    some text
+                {% endfor %}
+            </ul>
+        </body>
+        <script>
+            {% include "/web_ui/pages/main.js" %}
+        </script>
+    </html>
+    """
+
+    context = {
+        "title": "Test Page",
+        "item": "Test Item",
+        "some_variable": "This is a test variable.",
+        "condition": True,
+        "header": "Welcome to the Test Page",
+        "items": ["Item 1", "Item 2", "Item 3"],
+    }
+
+    preprocessor = HTMLPreprocessor(template_str)
+    rendered_str = preprocessor.render(context)
+    print(rendered_str)
