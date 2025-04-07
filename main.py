@@ -86,13 +86,14 @@ modes = {
     "meteor": Mode(meteor_effect.MeteorEffect(strip)),
     "pulse": Mode(pulse_effect.PulseEffect(strip)),
     "filling": Mode(filling_effect.FillingEffect(strip)),
-    "fill": Mode(fill_effect.FillEffect(strip)),
+    "solid": Mode(fill_effect.FillEffect(strip)),
 }
 
 mode_controller = ModeController(modes)
 wifi_manager = WiFiManager(name, "wificred")
 http_server = HTTPServer()
 input_controller = InputController(
+    mode_controller,
     wifi_manager,
     http_server,
     mode_controller.next_mode,
@@ -100,6 +101,7 @@ input_controller = InputController(
     mode_controller.next_speed,
     mode_controller.previous_speed,
     mode_controller.next_color,
+    mode_controller.previous_color,
     mode_controller.set_own_speed,
     update,
     set_config,

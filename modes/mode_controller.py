@@ -59,6 +59,9 @@ class ModeController:
     def next_color(self):
         self.mode_change_strategy.next_color(self)
 
+    def previous_color(self):
+        self.mode_change_strategy.previous_color(self)
+    
     async def run(self):
         while True:
             await self.task  # type: ignore it works fine
