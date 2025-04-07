@@ -142,43 +142,13 @@ class HTMLPreprocessor:
 
         return template
 
-
-if __name__ == "__main__":
-    template_str = """
-    <html>
-        <head>
-            <title>{{ title }}</title>
-            <style>
-                {% include "/web_ui/pages/index.css" %}
-            </style>
-        </head>
-        <body>
-        {{ some_variable }}
-            {% if condition %}
-                <h1>{{ header }}</h1>
-            {% endif %}
-            <ul>
-                {% for item in items %}
-                    <li>{% item %}</li>
-                    some text
-                {% endfor %}
-            </ul>
-        </body>
-        <script>
-            {% include "/web_ui/pages/main.js" %}
-        </script>
-    </html>
-    """
-
-    context = {
-        "title": "Test Page",
-        "item": "Test Item",
-        "some_variable": "This is a test variable.",
-        "condition": True,
-        "header": "Welcome to the Test Page",
-        "items": ["Item 1", "Item 2", "Item 3"],
-    }
-
-    preprocessor = HTMLPreprocessor(template_str)
-    rendered_str = preprocessor.render(context)
-    print(rendered_str)
+    @staticmethod
+    def from_file(file_path: str) -> "HTMLPreprocessor":
+        """
+        Static method to create an instance of HTMLPreprocessor from a file.
+        :param file_path: The path to the HTML file.
+        :return: An instance of HTMLPreprocessor.
+        """
+        with open(file_path, "r") as file:
+            template_str = file.read()
+        return HTMLPreprocessor(template_str)
