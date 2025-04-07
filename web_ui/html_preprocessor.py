@@ -31,7 +31,7 @@ class HTMLPreprocessor:
         # Handle loops
         rendered_str = self._handle_loops(rendered_str, context)
         # Minify HTML
-        # rendered_str = self._minify_html(rendered_str)
+        rendered_str = self._minify_html(rendered_str)
 
         return rendered_str
 
