@@ -1,3 +1,5 @@
+import json
+from utils import make_http_response
 from wireless import setup_page
 from web_ui.html_preprocessor import HTMLPreprocessor
 from config import config
@@ -58,7 +60,7 @@ class WebUIController:
                 "modes": self.input_controller.mode_controller.modes.keys(),
             }
         )
-        
+
         setting_page = self.setting_page.render(
             {
                 "name": config.get("name"),
@@ -66,9 +68,17 @@ class WebUIController:
                 "num_leds": config.get("num_leds"),
             }
         )
+
+        config_data = config.config
+        modes_list = list(self.input_controller.mode_controller.modes.keys())
+        print(modes_list)
         self.http_server.add_route("/", lambda method, body: index_page)
+        self.http_server.add_route("/settings", lambda method, body: setting_page)
         self.http_server.add_route(
-            "/settings", lambda method, body: setting_page
+            "/get_state",
+            lambda _, __: make_http_response(
+                body=json.dumps({"config": config_data, "modes": modes_list})
+            ),
         )
 
     def _callback_wrapper(self, callback, callback_args_keys=None):
