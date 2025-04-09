@@ -1,8 +1,19 @@
 import asyncio
+import gc
 
 from wireless.http_server import HTTPServer
 from wireless.wifi_manager import WiFiManager
 from web_ui.web_ui_controller import WebUIController
+from commands.mode_commands import (
+    NextModeCommand,
+    PreviousModeCommand,
+    SetModeCommand,
+    NextSpeedCommand,
+    PreviousSpeedCommand,
+    NextColorCommand,
+    PreviousColorCommand,
+    SetSpeedCommand,
+)
 
 
 class InputController:
@@ -14,9 +25,37 @@ class InputController:
     ):
         self.wifi_manager: WiFiManager = wifi_manager
         self.http_server: HTTPServer = http_server
-
-        self.web_ui_controller = WebUIController(http_server, self)
+        self.web_ui_controller: WebUIController = WebUIController(http_server, self)
         self.app = app
+
+        self.command_registry = self._initialize_commands()
+
+    def _initialize_commands(self):
+        return {
+            "next_mode": NextModeCommand,
+            "previous_mode": PreviousModeCommand,
+            "next_speed": NextSpeedCommand,
+            "previous_speed": PreviousSpeedCommand,
+            "next_color": NextColorCommand,
+            "previous_color": PreviousColorCommand,
+            "set_speed": SetSpeedCommand,
+            "set_mode": SetModeCommand,
+        }
+
+    def execute_command(self, command_name, *args):
+        command = self.command_registry.get(command_name)
+        mode_controller = self.app.mode_controller
+        if not command:
+            raise ValueError("Command not found")
+
+        if args:  # Handle commands requiring arguments
+            command = command(mode_controller, *args)
+        else:
+            command = command(mode_controller)
+
+        command.execute()
+        del command
+        gc.collect()
 
     async def run(self):
         await self.http_server.host_server()
@@ -45,39 +84,34 @@ class InputController:
         self.wifi_manager.save_credentials(ssid, password)
 
     def next_mode(self):
-        self.app.mode_controller.next_mode()
+        self.execute_command("next_mode")
 
     def previous_mode(self):
-        self.app.mode_controller.previous_mode()
+        self.execute_command("previous_mode")
 
     def next_speed(self):
-        self.app.mode_controller.next_speed()
+        self.execute_command("next_speed")
 
     def previous_speed(self):
-        self.app.mode_controller.previous_speed()
-
-    def previous_color(self):
-        self.app.mode_controller.previous_color()
+        self.execute_command("previous_speed")
 
     def next_color(self):
-        self.app.mode_controller.next_color()
+        self.execute_command("next_color")
+
+    def previous_color(self):
+        self.execute_command("previous_color")
 
     def set_speed(self, speed):
-        if not isinstance(speed, int):
-            try:
-                speed = int(speed)
-            except ValueError:
-                return
-        self.app.mode_controller.set_own_speed(speed)
+        self.execute_command("set_speed", speed)
+
+    def set_mode(self, mode):
+        self.execute_command("set_mode", mode)
 
     def update(self):
         self.app.update()
 
     def set_config(self, data):
         self.app.set_config(data)
-
-    def set_mode(self, mode):
-        self.app.mode_controller.select_mode_by_name(mode)
 
     def get_available_modes(self):
         return list(self.app.mode_controller.modes.keys())
