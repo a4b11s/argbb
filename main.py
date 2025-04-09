@@ -16,9 +16,7 @@ name = str(config.get("name", "argbb"))
 
 strip = neopixel.NeoPixel(machine.Pin(strip_pin), strip_num_leds)
 
-# Use ModeFactory to create modes
 mode_factory = ModeFactory(strip)
-
 mode_controller = ModeController(mode_factory)
 wifi_manager = WiFiManager(name, "wificred")
 app = App(mode_controller, wifi_manager)
