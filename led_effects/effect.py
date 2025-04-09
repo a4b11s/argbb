@@ -1,5 +1,6 @@
-import neopixel
 import asyncio
+
+import neopixel
 
 
 # Need for type hinting

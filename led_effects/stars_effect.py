@@ -1,5 +1,6 @@
-from led_effects.effect import Effect
 import random
+
+from led_effects.effect import Effect
 
 
 class StarsEffect(Effect):
@@ -73,9 +74,9 @@ class StarsEffect(Effect):
 
 
 async def main():
-    from neopixel import NeoPixel  # Example import, adjust as necessary
     import machine
     import utime
+    from neopixel import NeoPixel  # Example import, adjust as necessary
 
     strip = NeoPixel(machine.Pin(15), 300)  # Example pin and number of LEDs
 

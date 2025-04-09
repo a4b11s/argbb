@@ -1,4 +1,9 @@
-import usocket, os, gc
+import gc
+import os
+
+import usocket
+
+
 class Response:
 
     def __init__(self, socket, saveToFile=None):
@@ -89,7 +94,7 @@ class HttpClient:
                 gc.collect()
                 s = ussl.wrap_socket(s, server_hostname=host)
             s.write(b'%s /%s HTTP/1.0\r\n' % (method, path))
-            if not 'Host' in headers:
+            if 'Host' not in headers:
                 s.write(b'Host: %s\r\n' % host)
             # Iterate over keys to avoid tuple alloc
             _write_headers(s, self._headers)

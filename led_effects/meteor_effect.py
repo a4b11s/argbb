@@ -1,5 +1,6 @@
-from led_effects.effect import Effect
 import random
+
+from led_effects.effect import Effect
 
 
 class MeteorEffect(Effect):

@@ -40,3 +40,7 @@ def parse_headers(headers):
     headers = [header for header in headers if header]
     headers = {header.split(": ")[0]: header.split(": ")[1] for header in headers}
     return headers
+
+
+def noop():
+    pass

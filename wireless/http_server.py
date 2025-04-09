@@ -1,8 +1,8 @@
 import asyncio
 import sys
 
-from wireless.body_parser import BodyParser
 from utils import make_http_response, parse_http
+from wireless.body_parser import BodyParser
 
 
 class HTTPServer:

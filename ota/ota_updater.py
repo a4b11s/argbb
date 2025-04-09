@@ -1,4 +1,6 @@
-import os, gc
+import gc
+import os
+
 from .httpclient import HttpClient
 
 
@@ -32,8 +34,6 @@ class OTAUpdater:
         self.main_dir = main_dir
         self.new_version_dir = new_version_dir
         self.secrets_file = secrets_file
-
-        print(self.exclude_files)
 
     def __del__(self):
         self.http_client = None
@@ -151,7 +151,7 @@ class OTAUpdater:
         gh_json = latest_release.json()
         try:
             version = gh_json["tag_name"]
-        except KeyError as e:
+        except KeyError:
             raise ValueError(
                 "Release not found: \n",
                 "Please ensure release as marked as 'latest', rather than pre-release \n",
