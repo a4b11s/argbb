@@ -1,39 +1,22 @@
 import asyncio
 
-from wireless import wifi_manager, http_server
+from wireless.http_server import HTTPServer
+from wireless.wifi_manager import WiFiManager
 from web_ui.web_ui_controller import WebUIController
 
 
 class InputController:
     def __init__(
         self,
-        mode_controller,
-        wifi_manager: wifi_manager.WiFiManager,
-        http_server: http_server.HTTPServer,
-        next_mode_callback=None,
-        previous_mode_callback=None,
-        next_speed_callback=None,
-        previous_speed_callback=None,
-        next_color_callback=None,
-        previous_color_callback=None,
-        set_speed_callback=None,
-        update_callback=None,
-        set_config_callback=None,
+        wifi_manager: WiFiManager,
+        http_server: HTTPServer,
+        app,
     ):
-        self.mode_controller = mode_controller
-        self.next_mode_callback = next_mode_callback
-        self.previous_mode_callback = previous_mode_callback
-        self.next_speed_callback = next_speed_callback
-        self.previous_speed_callback = previous_speed_callback
-        self.next_color_callback = next_color_callback
-        self.previous_color_callback = previous_color_callback
-        self.set_speed_callback = set_speed_callback
+        self.wifi_manager: WiFiManager = wifi_manager
+        self.http_server: HTTPServer = http_server
 
-        self.wifi_manager = wifi_manager
-        self.http_server = http_server
-        self.update_callback = update_callback
-        self.set_config_callback = set_config_callback
         self.web_ui_controller = WebUIController(http_server, self)
+        self.app = app
 
     async def run(self):
         await self.http_server.host_server()
@@ -62,28 +45,22 @@ class InputController:
         self.wifi_manager.save_credentials(ssid, password)
 
     def next_mode(self):
-        if self.next_mode_callback:
-            self.next_mode_callback()
+        self.app.mode_controller.next_mode()
 
     def previous_mode(self):
-        if self.previous_mode_callback:
-            self.previous_mode_callback()
+        self.app.mode_controller.previous_mode()
 
     def next_speed(self):
-        if self.next_speed_callback:
-            self.next_speed_callback()
+        self.app.mode_controller.next_speed()
 
     def previous_speed(self):
-        if self.previous_speed_callback:
-            self.previous_speed_callback()
+        self.app.mode_controller.previous_speed()
 
     def previous_color(self):
-        if self.previous_color_callback:
-            self.previous_color_callback()
+        self.app.mode_controller.previous_color()
 
     def next_color(self):
-        if self.next_color_callback:
-            self.next_color_callback()
+        self.app.mode_controller.next_color()
 
     def set_speed(self, speed):
         if not isinstance(speed, int):
@@ -91,16 +68,16 @@ class InputController:
                 speed = int(speed)
             except ValueError:
                 return
-        if self.set_speed_callback:
-            self.set_speed_callback(speed / 10)
+        self.app.mode_controller.set_own_speed(speed)
 
     def update(self):
-        if self.update_callback:
-            self.update_callback()
+        self.app.update()
 
     def set_config(self, data):
-        if self.set_config_callback:
-            self.set_config_callback(data)
+        self.app.set_config(data)
 
     def set_mode(self, mode):
-        self.mode_controller.select_mode_by_name(mode)
+        self.app.mode_controller.select_mode_by_name(mode)
+
+    def get_available_modes(self):
+        return list(self.app.mode_controller.modes.keys())

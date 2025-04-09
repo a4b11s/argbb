@@ -14,6 +14,9 @@ class WebUIController:
         self.setting_page = HTMLPreprocessor.from_file("/web_ui/pages/settings.html")
 
     async def setup_http_server(self):
+        config_data = config.config
+        modes_list = self.input_controller.get_available_modes()
+
         self.http_server.add_route("/wifi", self.wifi_endpoint)
         self.http_server.add_route(
             "/next_mode", self._callback_wrapper(self.input_controller.next_mode)
@@ -55,10 +58,7 @@ class WebUIController:
         )
 
         index_page = self.index_page.render(
-            {
-                "title": config.get("name"),
-                "modes": self.input_controller.mode_controller.modes.keys(),
-            }
+            {"title": config.get("name"), "modes": modes_list}
         )
 
         setting_page = self.setting_page.render(
@@ -69,11 +69,8 @@ class WebUIController:
             }
         )
 
-        config_data = config.config
-        modes_list = list(self.input_controller.mode_controller.modes.keys())
-        print(modes_list)
-        self.http_server.add_route("/", lambda method, body: index_page)
-        self.http_server.add_route("/settings", lambda method, body: setting_page)
+        self.http_server.add_route("/", lambda _, __: index_page)
+        self.http_server.add_route("/settings", lambda _, __: setting_page)
         self.http_server.add_route(
             "/get_state",
             lambda _, __: make_http_response(
