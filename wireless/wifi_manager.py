@@ -39,7 +39,7 @@ class WiFiManager:
     def start_access_point(self):
         self.ap.active(True)
 
-    async def connect_to_wifi(
+    def connect_to_wifi(
         self, ssid: str, password: str, timeout: int = 20, interval: int = 1
     ):
         self.sta.active(True)
@@ -50,9 +50,12 @@ class WiFiManager:
             print("Connecting to WiFi...")
             if utime.time() - start > timeout:
                 raise TimeoutError("Connection to WiFi timed out")
-            await asyncio.sleep(interval)
+            utime.sleep(interval)
 
-        await self._setup_mdns()
+
+        print("start setup mDNS")
+        asyncio.run(self._setup_mdns())
+        print("mDNS ok")
 
     async def _setup_mdns(self):
         own_ip_address = self.sta.ifconfig()[0]

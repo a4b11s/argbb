@@ -1,14 +1,13 @@
-import json
-from app import App
-from input_controller import InputController
-from modes.mode_factory import ModeFactory
 import asyncio
 import utime
 import neopixel
 import machine
+
+from app import App
 from config import config
 from modes.mode_controller import ModeController
 from wireless.wifi_manager import WiFiManager
+from modes.mode_factory import ModeFactory
 
 strip_pin = int(config.get("led_pin"))  # type: ignore
 strip_num_leds = int(config.get("num_leds"))  # type: ignore
@@ -22,30 +21,12 @@ wifi_manager = WiFiManager(name, "wificred")
 app = App(mode_controller, wifi_manager)
 
 
-async def setup():
-    asyncio.create_task(app.setup())
-
-
-async def mode_change():
-    while True:
-        await asyncio.sleep(20)
-        app.mode_controller.next_mode()
-        await asyncio.sleep(10)
-        app.mode_controller.next_color()
-
-
-async def main():
-    asyncio.create_task(app.run())
-    while True:
-        await asyncio.sleep(1)
-
-
 if __name__ == "__main__":
     strip.fill((255, 0, 0))
     strip.write()
 
     utime.sleep_ms(2000)
-    app.synchrony_setup()
+    app.setup()
     utime.sleep_ms(1000)
     mode_controller.select_mode_by_name("interpol")
-    asyncio.run(main())
+    asyncio.run(app.run())

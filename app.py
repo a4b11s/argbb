@@ -18,11 +18,8 @@ class App:
         http_server = HTTPServer()
         self.input_controller = InputController(wifi_manager, http_server, self)
 
-    def synchrony_setup(self):
-        self.input_controller.synchrony_setup()
-
-    async def setup(self):
-        await self.input_controller.setup()
+    def setup(self):
+        self.input_controller.setup()
 
     async def run(self):
         asyncio.create_task(self.input_controller.run())

@@ -63,15 +63,15 @@ class InputController:
     def synchrony_setup(self):
         asyncio.run(self.setup())
 
-    async def setup(self):
-        await self._setup_wifi()
-        await self.web_ui_controller.setup_http_server()
+    def setup(self):
+        self._setup_wifi()
+        self.web_ui_controller.setup_http_server()
 
-    async def _setup_wifi(self):
+    def _setup_wifi(self):
         wifi_credentials = self.wifi_manager.load_credentials()
         if wifi_credentials:
             try:
-                await self.wifi_manager.connect_to_wifi(
+                self.wifi_manager.connect_to_wifi(
                     wifi_credentials["ssid"], wifi_credentials["password"]
                 )
             except Exception as e:

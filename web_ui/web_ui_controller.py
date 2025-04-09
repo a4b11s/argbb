@@ -11,5 +11,5 @@ class WebUIController:
             input_controller,
         )
 
-    async def setup_http_server(self):
+    def setup_http_server(self):
         self.router.register_routes()
