@@ -114,4 +114,4 @@ class InputController:
         self.app.set_config(data)
 
     def get_available_modes(self):
-        return list(self.app.mode_controller.modes.keys())
+        return self.app.mode_controller.get_available_modes()
