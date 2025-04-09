@@ -1,21 +1,20 @@
+from led_effects import (
+    double_snake_effect,
+    fill_effect,
+    filling_effect,
+    interpol_effect,
+    lightningbolt_effect,
+    meteor_effect,
+    off_effect,
+    pixel_madness_effect,
+    pulse_effect,
+    rainbow_train_effect,
+    snail_effect,
+    snake_effect,
+    train_effect,
+)
 from modes.mode import Mode
 from utils import noop
-
-from led_effects import (
-    pulse_effect,
-    filling_effect,
-    fill_effect,
-    off_effect,
-    meteor_effect,
-    rainbow_train_effect,
-    train_effect,
-    lightningbolt_effect,
-    snake_effect,
-    double_snake_effect,
-    pixel_madness_effect,
-    snail_effect,
-    interpol_effect,
-)
 
 
 class ModeFactory:

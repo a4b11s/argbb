@@ -1,8 +1,9 @@
 import json
+
+from config import config
 from utils import make_http_response
 from web_ui.html_preprocessor import HTMLPreprocessor
 from wireless import setup_page
-from config import config
 
 
 class Router:

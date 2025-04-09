@@ -1,19 +1,19 @@
 import asyncio
 import gc
 
-from wireless.http_server import HTTPServer
-from wireless.wifi_manager import WiFiManager
-from web_ui.web_ui_controller import WebUIController
 from commands.mode_commands import (
-    NextModeCommand,
-    PreviousModeCommand,
-    SetModeCommand,
-    NextSpeedCommand,
-    PreviousSpeedCommand,
     NextColorCommand,
+    NextModeCommand,
+    NextSpeedCommand,
     PreviousColorCommand,
+    PreviousModeCommand,
+    PreviousSpeedCommand,
+    SetModeCommand,
     SetSpeedCommand,
 )
+from web_ui.web_ui_controller import WebUIController
+from wireless.http_server import HTTPServer
+from wireless.wifi_manager import WiFiManager
 
 
 class InputController:

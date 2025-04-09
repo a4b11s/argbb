@@ -1,8 +1,9 @@
-from modes.mode import Mode
 import asyncio
-from modes.mode_change_strategy import ModeChangeStrategy, DefaultModeChangeStrategy
+
+from modes.mode import Mode
+from modes.mode_change_strategy import DefaultModeChangeStrategy, ModeChangeStrategy
 from modes.mode_factory import ModeFactory
-from modes.speed_change_strategy import SpeedChangeStrategy, DefaultSpeedChangeStrategy
+from modes.speed_change_strategy import DefaultSpeedChangeStrategy, SpeedChangeStrategy
 
 
 class ModeController:

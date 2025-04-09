@@ -1,13 +1,14 @@
 import asyncio
-import utime
-import neopixel
+
 import machine
+import neopixel
+import utime
 
 from app import App
 from config import config
 from modes.mode_controller import ModeController
-from wireless.wifi_manager import WiFiManager
 from modes.mode_factory import ModeFactory
+from wireless.wifi_manager import WiFiManager
 
 strip_pin = int(config.get("led_pin"))  # type: ignore
 strip_num_leds = int(config.get("num_leds"))  # type: ignore

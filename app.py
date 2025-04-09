@@ -1,4 +1,5 @@
 import asyncio
+
 from input_controller import InputController
 from modes.mode_controller import ModeController
 from multicast import broadcast_me
@@ -29,9 +30,11 @@ class App:
             await asyncio.sleep(1)
 
     def update(self):
-        from ota.ota_updater import OTAUpdater
         import gc
+
         import machine
+
+        from ota.ota_updater import OTAUpdater
 
         try:
             import rp2
@@ -57,8 +60,10 @@ class App:
 
     def set_config(self, data):
         import json
-        from config import config
+
         import machine
+
+        from config import config
 
         if not isinstance(data, dict):
             data = json.loads(data)

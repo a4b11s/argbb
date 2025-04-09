@@ -1,5 +1,4 @@
 from web_ui.router import Router
-from web_ui.html_preprocessor import HTMLPreprocessor
 
 
 class WebUIController:

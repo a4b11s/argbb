@@ -12,7 +12,7 @@ class BodyParser:
     def _parse_json(self, body):
         try:
             return json.loads(body)
-        except:
+        except Exception:
             return {"error": "Invalid JSON"}
 
     def _parse_form(self, body):

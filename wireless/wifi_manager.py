@@ -1,8 +1,8 @@
+import asyncio
+
 import machine
 import network
 import utime
-import asyncio
-
 from mdns_client import Client  # type: ignore
 from mdns_client.responder import Responder  # type: ignore
 
