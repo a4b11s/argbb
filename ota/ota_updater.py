@@ -33,8 +33,6 @@ class OTAUpdater:
         self.new_version_dir = new_version_dir
         self.secrets_file = secrets_file
 
-        print(self.exclude_files)
-
     def __del__(self):
         self.http_client = None
 
