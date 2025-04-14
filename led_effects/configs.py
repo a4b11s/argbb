@@ -52,3 +52,17 @@ class EffectConfig:
             list: A list containing the keys of the `fields` dictionary.
         """
         return list(self.fields.keys())
+
+
+class SnakeEffectConfig(EffectConfig):
+    def __init__(
+        self,
+        color=(255, 0, 0),
+        bg_color=(0, 0, 0),
+        sleep_ms=50,
+        tail_length=5,
+    ):
+        super().__init__(color, bg_color, sleep_ms)
+        self.fields.update({
+            "tail_length": Field(tail_length, "tail_length", "The length of the snake tail effect in the LED animation")
+        })

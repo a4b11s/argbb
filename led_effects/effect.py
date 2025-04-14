@@ -1,5 +1,6 @@
 import asyncio
 
+from led_effects.configs import EffectConfig
 import neopixel
 
 
@@ -14,24 +15,17 @@ class IStrip(neopixel.NeoPixel):
     def __len__(self):
         return super().__len__()  # type: ignore
 
-
 class Effect:
-    def __init__(self, strip):
+    def __init__(self, strip, config: EffectConfig):
         self.strip: IStrip = strip
-        self.color = (0, 0, 0)
-        self.sleep_ms = 50
+        self.config = config
         self.color_has_changed = False
 
-    def set_color(self, color):
-        self.color = color
+    def set_config(self, config: EffectConfig):
+        self.config = config
         self.color_has_changed = True
 
-    def set_sleep_ms(self, sleep_ms):
-        self.sleep_ms = sleep_ms
-
-    async def run(self, color, sleep_ms):
-        self.set_color(color)
-        self.set_sleep_ms(sleep_ms)
+    async def run(self):
         await self._run()
 
     async def _run(self):
