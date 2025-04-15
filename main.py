@@ -1,5 +1,6 @@
 import asyncio
 
+from led_effects.effect_factory import EffectFactory
 import machine
 import neopixel
 import utime
@@ -16,6 +17,7 @@ name = str(config.get("name", "argbb"))
 
 strip = neopixel.NeoPixel(machine.Pin(strip_pin), strip_num_leds)
 
+effect_factory = EffectFactory()
 mode_factory = ModeFactory(strip)
 mode_controller = ModeController(mode_factory)
 wifi_manager = WiFiManager(name, "wificred")
@@ -29,5 +31,5 @@ if __name__ == "__main__":
     utime.sleep_ms(2000)
     app.setup()
     utime.sleep_ms(1000)
-    mode_controller.select_mode_by_name("interpol")
+    mode_controller.select_mode_by_name("double_snake")
     asyncio.run(app.run())

@@ -1,12 +1,7 @@
 from led_effects.effect import Effect
 
-# TODO: need to add a way to set the colors from the mode controller. Maybe different abstract class?
 
 class InterpolEffect(Effect):
-    color2 = (0, 255, 0)
-    color3 = (0, 0, 255)
-    steps = 80
-
     def _interpolate_colors(self, color1, color2, steps):
 
         r1, g1, b1 = color1
@@ -29,25 +24,21 @@ class InterpolEffect(Effect):
         return colors
 
     async def _run(self):
-        self.strip.fill((0, 0, 0))
-        colors = self._interpolate_colors(self.color, self.color2, self.steps)
+        colors_array = self.config.get("colors_array").value.copy()  # type: ignore
+        colors_array.append(colors_array[0])
 
-        for color in colors:
-            for i in range(len(self.strip)):
-                self.strip[i] = color
-            self.strip.write()
+        sleep_ms = self.config.get("sleep_ms")
+        interpolate_steps = self.config.get("interpolate_steps")
+        colors_array_length = len(colors_array)
+        for i in range(colors_array_length - 1):
+            colors = self._interpolate_colors(
+                colors_array[i], colors_array[i + 1], interpolate_steps.value  # type: ignore
+            )
 
-        
-        colors = self._interpolate_colors(self.color2, self.color3, self.steps)
-        for color in colors:
-            for i in range(len(self.strip)):
-                self.strip[i] = color
-            self.strip.write()
-            await self._sleep(self.sleep_ms)
-            
-        colors = self._interpolate_colors(self.color3, self.color, self.steps)
-        for color in colors:
-            for i in range(len(self.strip)):
-                self.strip[i] = color
-            self.strip.write()
-            await self._sleep(self.sleep_ms)
+            for color in colors:
+                for i in range(len(self.strip)):
+                    self.strip[i] = color
+                self.strip.write()
+                await self._sleep(sleep_ms.value)  # type: ignore
+
+        del colors_array

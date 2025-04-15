@@ -2,21 +2,20 @@ from led_effects.effect import Effect
 
 
 class SnailEffect(Effect):
-    def __init__(self, strip, tail_length=4):
-        super().__init__(strip)
-        self.tail_length = tail_length
-        self.sleep_ms = 1000
-
     async def _run(self):
-        self.strip.fill((0, 0, 0))
-        for i in range(self.tail_length, len(self.strip)):
-            for j in range(self.tail_length):
+        color = self.config.get("primary_color")
+        sleep_ms = self.config.get("sleep_ms")
+        tail_length = self.config.get("tail_length")
+        bg_color = self.config.get("bg_color")
+        self.strip.fill(bg_color.value)  # type: ignore
+        for i in range(tail_length.value, len(self.strip)):  # type: ignore
+            for j in range(tail_length.value):  # type: ignore
                 index = i - j
                 if index < 0:
                     continue
-                self.strip[index] = self.color
+                self.strip[index] = color.value  # type: ignore
 
-            self.strip[i - self.tail_length] = self._calc_brightness(self.color, 0.05)
+            self.strip[i - tail_length.value] = self._calc_brightness(color.value, 0.05)  # type: ignore
 
             self.strip.write()
-            await self._sleep(self.sleep_ms)
+            await self._sleep(sleep_ms.value) # type: ignore

@@ -1,23 +1,24 @@
-from led_effects.effect import Effect
+from led_effects.effect import Effect, EffectConfig
 
 
 class DoubleSnakeEffect(Effect):
-    def __init__(self, strip, tail_length=8):
-        super().__init__(strip)
-        self.tail_length = tail_length
-
     async def _run(self):
+        color = self.config.get("primary_color")
+        sleep_ms = self.config.get("sleep_ms")
+        tail_length = self.config.get("tail_length")
+        bg_color = self.config.get("bg_color")
+
         for i in range(len(self.strip)):
-            self.strip.fill((0, 0, 0))
-            for j in range(self.tail_length):
+            self.strip.fill(bg_color.value)  # type: ignore
+            for j in range(tail_length.value):  # type: ignore
                 first_index = i + j
                 second_index = len(self.strip) - i - j - 1
                 if first_index >= len(self.strip):
                     continue
                 if second_index < 0:
                     continue
-                self.strip[first_index] = self.color
-                self.strip[second_index] = self.color
+                self.strip[first_index] = color.value  # type: ignore
+                self.strip[second_index] = color.value  # type: ignore
 
             self.strip.write()
-            await self._sleep(self.sleep_ms)
+            await self._sleep(sleep_ms.value)  # type: ignore

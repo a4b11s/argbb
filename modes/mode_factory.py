@@ -1,18 +1,4 @@
-from led_effects import (
-    double_snake_effect,
-    fill_effect,
-    filling_effect,
-    interpol_effect,
-    lightningbolt_effect,
-    meteor_effect,
-    off_effect,
-    pixel_madness_effect,
-    pulse_effect,
-    rainbow_train_effect,
-    snail_effect,
-    snake_effect,
-    train_effect,
-)
+from led_effects.effect_factory import EffectFactory
 from modes.mode import Mode
 from utils import noop
 
@@ -20,33 +6,50 @@ from utils import noop
 class ModeFactory:
     def __init__(self, strip):
         self.strip = strip
+        self.effect_factory = EffectFactory()
 
     def _get_mode_map(self):
         return {
-            "off": lambda: Mode(off_effect.OffEffect(self.strip)),
-            "interpol": lambda: Mode(interpol_effect.InterpolEffect(self.strip)),
-            "snail": lambda: Mode(snail_effect.SnailEffect(self.strip)),
+            "off": lambda: Mode(self.effect_factory.create_effect("off", self.strip)),
+            "interpol": lambda: Mode(
+                self.effect_factory.create_effect("interpol", self.strip)
+            ),
+            "snail": lambda: Mode(
+                self.effect_factory.create_effect("snail", self.strip)
+            ),
             "pixel_madness": lambda: Mode(
-                pixel_madness_effect.PixelMadnessEffect(self.strip)
+                self.effect_factory.create_effect("pixel_madness", self.strip)
             ),
             "pixel_madness_bi": lambda: Mode(
-                pixel_madness_effect.PixelMadnessBiDirectEffect(self.strip)
+                self.effect_factory.create_effect("pixel_madness_bi", self.strip)
             ),
-            "snake": lambda: Mode(snake_effect.SnakeEffect(self.strip)),
+            "snake": lambda: Mode(
+                self.effect_factory.create_effect("snake", self.strip)
+            ),
             "double_snake": lambda: Mode(
-                double_snake_effect.DoubleSnakeEffect(self.strip)
+                self.effect_factory.create_effect("double_snake", self.strip)
             ),
-            "lightning": lambda: Mode(
-                lightningbolt_effect.LightningBoltEffect(self.strip)
+            "lightningbolt": lambda: Mode(
+                self.effect_factory.create_effect("lightningbolt", self.strip)
             ),
-            "train": lambda: Mode(train_effect.TrainEffect(self.strip)),
+            "train": lambda: Mode(
+                self.effect_factory.create_effect("train", self.strip)
+            ),
             "rainbow_train": lambda: Mode(
-                rainbow_train_effect.RainbowTrainEffect(self.strip)
+                self.effect_factory.create_effect("rainbow_train", self.strip)
             ),
-            "meteor": lambda: Mode(meteor_effect.MeteorEffect(self.strip)),
-            "pulse": lambda: Mode(pulse_effect.PulseEffect(self.strip)),
-            "filling": lambda: Mode(filling_effect.FillingEffect(self.strip)),
-            "solid": lambda: Mode(fill_effect.FillEffect(self.strip)),
+            "meteor": lambda: Mode(
+                self.effect_factory.create_effect("meteor", self.strip)
+            ),
+            "pulse": lambda: Mode(
+                self.effect_factory.create_effect("pulse", self.strip)
+            ),
+            "filling": lambda: Mode(
+                self.effect_factory.create_effect("filling", self.strip)
+            ),
+            "solid": lambda: Mode(
+                self.effect_factory.create_effect("solid", self.strip)
+            ),
         }
 
     def get_available_modes(self):
