@@ -63,4 +63,31 @@ window.addEventListener("load", () => {
     });
     SPEED_PROGRESS.value = 500;
   }
+
+  const colorPicker = new iro.ColorPicker("#picker", {
+    width: 500,
+    color: "#f00",
+  });
+
+  const debounce = (func, delay) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), delay);
+    };
+  };
+
+  const sendColorChange = debounce((color) => {
+    fetch("/set_color", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ color: color.hexString }),
+    });
+  }, 300);
+
+  colorPicker.on("color:change", (color) => {
+    sendColorChange(color);
+  });
 });
