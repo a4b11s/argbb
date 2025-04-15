@@ -22,7 +22,13 @@ class Field:
         elif val_type == "string":
             return str(value)
         elif val_type == "color":
-            if isinstance(value, tuple) and len(value) == 3:
+            if (
+                isinstance(value, tuple)
+                and len(value) == 3
+                or isinstance(value, list)
+                and len(value) == 3
+            ):
+                print(value)
                 return tuple(map(int, value))
             else:
                 raise ValueError(
@@ -38,7 +44,7 @@ class Field:
 
     @property
     def value(self):
-        return self._cast_type(self._value, self.val_type)
+        return self._value
 
     @value.setter
     def value(self, val):
