@@ -30,7 +30,7 @@ class EffectFactory:
     def _get_effects(self):
         return {
             "double_snake": DoubleSnakeEffect,
-            "fill": FillEffect,
+            "solid": FillEffect,
             "filling": FillingEffect,
             "interpol": InterpolEffect,
             "lightningbolt": LightningBoltEffect,
@@ -48,7 +48,7 @@ class EffectFactory:
     def _get_configs(self):
         return {
             "double_snake": SnakeEffectConfig,
-            "fill": EffectConfig,
+            "solid": EffectConfig,
             "filling": EffectConfig,
             "interpol": InterpolEffectConfig,
             "lightningbolt": LightningBoltEffectConfig,
