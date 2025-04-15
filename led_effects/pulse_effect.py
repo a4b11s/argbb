@@ -14,12 +14,12 @@ class PulseEffect(Effect):
 
     async def _run(self):
         color = self.config.get("primary_color")
-        sleep_ms = int(self.config.get("sleep_ms"))
+        sleep_ms = self.config.get("sleep_ms")
 
         for i in range(1, self._brightness_steps):
-            await self._step(color, i, sleep_ms)
+            await self._step(color.value, i, sleep_ms.value)  # type: ignore
         for i in range(self._brightness_steps, 0, -1):
-            await self._step(color, i, sleep_ms)
+            await self._step(color.value, i, sleep_ms.value)  # type: ignore
 
     def _calculate_brightness(self, color, brightness):
         br_percent = brightness / self._brightness_steps

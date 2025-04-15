@@ -11,20 +11,20 @@ class PixelMadnessEffect(Effect):
 
         for j in range(len(self.strip)):
             if self.strip[j] != (0, 0, 0):
-                self.strip[j] = color
+                self.strip[j] = color.value  # type: ignore
 
         self.strip.write()
         self.color_has_changed = False
 
     async def _run(self):
         color = self.config.get("primary_color")
-        sleep_ms = int(self.config.get("sleep_ms"))
+        sleep_ms = self.config.get("sleep_ms")
 
         self.strip.fill((0, 0, 0))
         index_array = self._get_index_array()
         for i in index_array:
-            self._apply(color, i)
-            await self._sleep(sleep_ms)
+            self._apply(color.value, i)  # type: ignore
+            await self._sleep(sleep_ms.value)  # type: ignore
         self.strip.write()
 
     def _apply(self, color, i):
@@ -44,13 +44,13 @@ class PixelMadnessEffect(Effect):
 class PixelMadnessBiDirectEffect(PixelMadnessEffect):
     async def _run(self):
         color = self.config.get("primary_color")
-        sleep_ms = int(self.config.get("sleep_ms"))
-        
+        sleep_ms = self.config.get("sleep_ms")
+
         self.strip.fill((0, 0, 0))
         index_array = self._get_index_array()
         for i in index_array:
-            self._apply(color, i)
-            await self._sleep(sleep_ms)
+            self._apply(color.value, i)  # type: ignore
+            await self._sleep(sleep_ms.value)  # type: ignore
         for i in reversed(index_array):
             self._apply((0, 0, 0), i)
-            await self._sleep(sleep_ms)
+            await self._sleep(sleep_ms.value)  # type: ignore

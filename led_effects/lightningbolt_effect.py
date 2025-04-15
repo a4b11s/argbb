@@ -8,23 +8,27 @@ class LightningBoltEffect(Effect):
     async def _run(self):
         while True:
 
-            min_await_between_bolts = int(self.config.get("min_await_between_bolts"))
-            max_await_between_bolts = int(self.config.get("max_await_between_bolts"))
+            min_await_between_bolts = self.config.get("min_await_between_bolts")
+            max_await_between_bolts = self.config.get("max_await_between_bolts")
 
             self.strip.fill((0, 0, 0))
             self.strip.write()
-            await self.random_await(min_await_between_bolts, max_await_between_bolts)
+            await self.random_await(min_await_between_bolts.value, max_await_between_bolts.value)  # type: ignore
 
             await self.bolt()
 
     async def bolt(self):
-        min_flashes = int(self.config.get("min_flashes"))
-        max_flashes = int(self.config.get("max_flashes"))
-        min_flashes_time = int(self.config.get("min_flashes_time"))
-        max_flashes_time = int(self.config.get("max_flashes_time"))
+        min_flashes = int(self.config.get("min_flashes").value)  # type: ignore
+        max_flashes = int(self.config.get("max_flashes").value)  # type: ignore
+        min_flashes_time = int(self.config.get("min_flashes_time").value)  # type: ignore
+        max_flashes_time = int(self.config.get("max_flashes_time").value)  # type: ignore
 
-        min_await_between_flashes = int(self.config.get("min_await_between_flashes"))
-        max_await_between_flashes = int(self.config.get("max_await_between_flashes"))
+        min_await_between_flashes = int(
+            self.config.get("min_await_between_flashes").value  # type: ignore
+        )
+        max_await_between_flashes = int(
+            self.config.get("max_await_between_flashes").value  # type: ignore
+        )
 
         flashes_count = random.randint(min_flashes, max_flashes)
         for _ in range(flashes_count):
@@ -43,9 +47,9 @@ class LightningBoltEffect(Effect):
         await self._sleep(random_ms)
 
     def get_random_brightness(self):
-        min_brightness = int(self.config.get("min_brightness"))
-        max_brightness = int(self.config.get("max_brightness"))
-        color = self.config.get("primary_color")
+        min_brightness = int(self.config.get("min_brightness").value)  # type: ignore
+        max_brightness = int(self.config.get("max_brightness").value)  # type: ignore
+        color = self.config.get("primary_color").value  # type: ignore
         return self._calc_brightness(
             color, random.randint(min_brightness, max_brightness) / 100
         )

@@ -42,7 +42,7 @@ class EffectConfig:
                 )
 
     def get(self, key):
-        return self.fields.get(key).value  # type: ignore
+        return self.fields.get(key)  # type: ignore
 
     def get_fields(self):
         """

@@ -16,7 +16,7 @@ class MeteorEffect(Effect):
 
                 feed_multiplayer = old_red / 255
 
-                n_r, n_g, n_b = color
+                n_r, n_g, n_b = color.value  # type: ignore
                 pixels[i] = (
                     int(n_r * feed_multiplayer),
                     int(n_g * feed_multiplayer),
@@ -29,19 +29,19 @@ class MeteorEffect(Effect):
     async def _run(self):
         color = self.config.get("primary_color")
         tail_length = self.config.get("tail_length")
-        sleep_ms = int(self.config.get("sleep_ms"))
+        sleep_ms = self.config.get("sleep_ms")
         pixels = [(0, 0, 0)] * len(self.strip)
 
-        for i in range(len(self.strip) + tail_length):
+        for i in range(len(self.strip) + tail_length.value):  # type: ignore
             if self.color_has_changed:
                 pixels = self._on_color_change(pixels, i)
 
             if i < len(self.strip):
-                pixels[i] = color
+                pixels[i] = color.value  # type: ignore
             self._apply_fade_effect(pixels)
             self._update_strip(pixels)
 
-            await self._sleep(sleep_ms)
+            await self._sleep(sleep_ms.value)  # type: ignore
 
     def _apply_fade_effect(self, pixels):
         for j in range(len(pixels)):
@@ -60,9 +60,9 @@ class MeteorEffect(Effect):
         fade_factor = self.config.get("fade_factor")
         spark_probability = self.config.get("spark_probability")
 
-        fade_multiplayer = random.uniform(*fade_factor)
+        fade_multiplayer = random.uniform(*fade_factor.value)  # type: ignore
 
-        if random.random() < spark_probability:
+        if random.random() < spark_probability.value:  # type: ignore
             fade_multiplayer = 2 - fade_multiplayer
 
         return fade_multiplayer

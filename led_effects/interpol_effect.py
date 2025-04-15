@@ -24,23 +24,21 @@ class InterpolEffect(Effect):
         return colors
 
     async def _run(self):
-        colors_array = self.config.get("colors_array").copy()
+        colors_array = self.config.get("colors_array").value.copy()  # type: ignore
         colors_array.append(colors_array[0])
 
-        sleep_ms = int(self.config.get("sleep_ms"))
-        interpolate_steps = int(self.config.get("interpolate_steps"))
-        self.strip.fill((0, 0, 0))
-
+        sleep_ms = self.config.get("sleep_ms")
+        interpolate_steps = self.config.get("interpolate_steps")
         colors_array_length = len(colors_array)
         for i in range(colors_array_length - 1):
             colors = self._interpolate_colors(
-                colors_array[i], colors_array[i + 1], interpolate_steps
+                colors_array[i], colors_array[i + 1], interpolate_steps.value  # type: ignore
             )
 
             for color in colors:
                 for i in range(len(self.strip)):
                     self.strip[i] = color
                 self.strip.write()
-                await self._sleep(sleep_ms)
+                await self._sleep(sleep_ms.value)  # type: ignore
 
         del colors_array
