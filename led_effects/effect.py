@@ -1,3 +1,4 @@
+import gc
 import asyncio
 
 from led_effects.configs import EffectConfig
@@ -15,6 +16,7 @@ class IStrip(neopixel.NeoPixel):
     def __len__(self):
         return super().__len__()  # type: ignore
 
+
 class Effect:
     def __init__(self, strip, config: EffectConfig):
         self.strip: IStrip = strip
@@ -27,6 +29,7 @@ class Effect:
 
     async def run(self):
         await self._run()
+        gc.collect()
 
     async def _run(self):
         raise NotImplementedError("run() method must be implemented in subclass")
