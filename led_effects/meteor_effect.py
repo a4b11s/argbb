@@ -4,16 +4,9 @@ from led_effects.effect import Effect
 
 
 class MeteorEffect(Effect):
-    def __init__(
-        self, strip, trail_length=50, fade_factor=(0.7, 0.9), spark_probability=0.1
-    ):
-        super().__init__(strip)
-        self.trail_length = trail_length
-        self.fade_factor = fade_factor
-        self.spark_probability = spark_probability
-        self.sleep_ms = 1000
-
     def _on_color_change(self, pixels, indx):
+        color = self.config.get("primary_color")
+
         for i in range(indx if indx < len(pixels) else len(pixels)):
             if pixels[i] == (0, 0, 0):
                 continue
@@ -23,7 +16,7 @@ class MeteorEffect(Effect):
 
                 feed_multiplayer = old_red / 255
 
-                n_r, n_g, n_b = self.color
+                n_r, n_g, n_b = color
                 pixels[i] = (
                     int(n_r * feed_multiplayer),
                     int(n_g * feed_multiplayer),
@@ -34,18 +27,21 @@ class MeteorEffect(Effect):
         return pixels
 
     async def _run(self):
+        color = self.config.get("primary_color")
+        tail_length = self.config.get("tail_length")
+        sleep_ms = int(self.config.get("sleep_ms"))
         pixels = [(0, 0, 0)] * len(self.strip)
 
-        for i in range(len(self.strip) + self.trail_length):
+        for i in range(len(self.strip) + tail_length):
             if self.color_has_changed:
                 pixels = self._on_color_change(pixels, i)
 
             if i < len(self.strip):
-                pixels[i] = self.color
+                pixels[i] = color
             self._apply_fade_effect(pixels)
             self._update_strip(pixels)
 
-            await self._sleep(self.sleep_ms)
+            await self._sleep(sleep_ms)
 
     def _apply_fade_effect(self, pixels):
         for j in range(len(pixels)):
@@ -60,9 +56,13 @@ class MeteorEffect(Effect):
             )
 
     def _calc_fade_multiplayer(self):
-        fade_multiplayer = random.uniform(*self.fade_factor)
 
-        if random.random() < self.spark_probability:
+        fade_factor = self.config.get("fade_factor")
+        spark_probability = self.config.get("spark_probability")
+
+        fade_multiplayer = random.uniform(*fade_factor)
+
+        if random.random() < spark_probability:
             fade_multiplayer = 2 - fade_multiplayer
 
         return fade_multiplayer

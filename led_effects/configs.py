@@ -181,3 +181,35 @@ class LightningBoltEffectConfig(EffectConfig):
                 ),
             }
         )
+
+
+class MeteorEffectConfig(EffectConfig):
+    def __init__(
+        self,
+        color=(255, 0, 0),
+        bg_color=(0, 0, 0),
+        sleep_ms=50,
+        tail_length=50,
+        fade_factor=(0.7, 0.9),
+        spark_probability=0.1,
+    ):
+        super().__init__(color, bg_color, sleep_ms)
+        self.fields.update(
+            {
+                "tail_length": Field(
+                    tail_length,
+                    "tail_length",
+                    "The length of the snake tail effect in the LED animation",
+                ),
+                "fade_factor": Field(
+                    fade_factor,
+                    "fade_factor",
+                    "The range of fade factors for the meteor effect",
+                ),
+                "spark_probability": Field(
+                    spark_probability,
+                    "spark_probability",
+                    "The probability of a spark appearing in the meteor effect",
+                ),
+            }
+        )
