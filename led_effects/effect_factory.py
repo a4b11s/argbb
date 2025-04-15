@@ -5,6 +5,7 @@ from led_effects.configs import (
     LightningBoltEffectConfig,
     MeteorEffectConfig,
     SnakeEffectConfig,
+    TrainEffectConfig,
 )
 from led_effects.effect import Effect
 from led_effects.double_snake_effect import DoubleSnakeEffect
@@ -57,9 +58,9 @@ class EffectFactory:
             "pixel_madness_bi": EffectConfig,
             "pulse": EffectConfig,
             "rainbow_train": EffectConfig,
-            "snail": EffectConfig,
+            "snail": SnakeEffectConfig,
             "snake": SnakeEffectConfig,
-            "train": EffectConfig,
+            "train": TrainEffectConfig,
         }
 
     def create_effect(self, effect_type, strip) -> Effect:

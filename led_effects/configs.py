@@ -213,3 +213,24 @@ class MeteorEffectConfig(EffectConfig):
                 ),
             }
         )
+
+
+class TrainEffectConfig(EffectConfig):
+    def __init__(
+        self, color=(255, 0, 0), bg_color=(0, 0, 0), sleep_ms=50, car_size=4, gap=1
+    ):
+        super().__init__(color, bg_color, sleep_ms)
+        self.fields.update(
+            {
+                "car_size": Field(
+                    car_size,
+                    "car_size",
+                    "The size of each car in the train effect",
+                ),
+                "gap": Field(
+                    gap,
+                    "gap",
+                    "The gap between cars in the train effect",
+                ),
+            }
+        )

@@ -2,17 +2,18 @@ from led_effects.effect import Effect
 
 
 class TrainEffect(Effect):
-    def __init__(self, strip, car_size=4):
-        super().__init__(strip)
-        self.car_size = car_size
-
     async def _run(self):
-        for shift in range(self.car_size + 1):
+        car_size = self.config.get("car_size")
+        gap = self.config.get("gap")
+        color = self.config.get("primary_color")
+        bg_color = self.config.get("bg_color")
+        sleep_ms = int(self.config.get("sleep_ms"))
+        for shift in range(car_size + 1):
             for i in range(len(self.strip)):
-                if (i - shift) % self.car_size == 0:
-                    self.strip[i] = (0, 0, 0)
+                if (i - shift) % car_size == 0:
+                    self.strip[i] = bg_color
                 else:
-                    self.strip[i] = self.color
+                    self.strip[i] = color
             self.strip.write()
 
-            await self._sleep(self.sleep_ms)
+            await self._sleep(sleep_ms)
