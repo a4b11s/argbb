@@ -62,6 +62,9 @@ class ModeController:
     def get_available_modes(self):
         return self.mode_factory.get_available_modes()
 
+    def update_mode_config(self, data: dict):
+        return self.selected_mode.update_mode_config(data)
+
     async def run(self):
         while True:
             await self.task  # type: ignore it works fine

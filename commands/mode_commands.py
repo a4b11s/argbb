@@ -65,3 +65,11 @@ class SetModeCommand(Command):
 
     def execute(self):
         self.mode_controller.select_mode_by_name(self.mode_name)
+
+
+class UpdateConfigCommand(Command):
+    def __init__(self, mode_controller, data):
+        self.mode_controller = mode_controller
+        self.data = data
+    def execute(self):
+        self.mode_controller.update_mode_config(self.data)

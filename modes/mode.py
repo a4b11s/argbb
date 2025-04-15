@@ -57,6 +57,9 @@ class Mode:
         self.led_effect.config.update_fields({"primary_color": self.color})
         self.led_effect.color_has_changed = True
 
+    def update_mode_config(self, data: dict):
+        self.led_effect.config.update_fields(data)
+
     async def _loop(self, coroutine):
         while True:
             self.task = coroutine()

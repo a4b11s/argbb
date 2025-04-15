@@ -78,16 +78,17 @@ window.addEventListener("load", () => {
   };
 
   const sendColorChange = debounce((color) => {
-    fetch("/set_color", {
+    fetch("/update_mode_config", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ color: color.hexString }),
+      body: JSON.stringify({ data: { primary_color: color } }),
     });
   }, 300);
 
   colorPicker.on("color:change", (color) => {
-    sendColorChange(color);
+    rgb = color.rgb;
+    sendColorChange([rgb.r, rgb.g, rgb.b]);
   });
 });

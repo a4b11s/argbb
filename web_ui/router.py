@@ -36,6 +36,7 @@ class Router:
             "/set_config": (self.input_controller.set_config, ["data"]),
             "/set_mode": (self.input_controller.set_mode, ["mode"]),
             "/update": self.input_controller.update,
+            "/update_mode_config": (self.input_controller.update_mode_config, ["data"])
         }
 
         for path, handler in routes.items():

@@ -10,6 +10,7 @@ from commands.mode_commands import (
     PreviousSpeedCommand,
     SetModeCommand,
     SetSpeedCommand,
+    UpdateConfigCommand,
 )
 from web_ui.web_ui_controller import WebUIController
 from wireless.http_server import HTTPServer
@@ -40,6 +41,7 @@ class InputController:
             "previous_color": PreviousColorCommand,
             "set_speed": SetSpeedCommand,
             "set_mode": SetModeCommand,
+            "update_config": UpdateConfigCommand,
         }
 
     def execute_command(self, command_name, *args):
@@ -106,6 +108,9 @@ class InputController:
 
     def set_mode(self, mode):
         self.execute_command("set_mode", mode)
+
+    def update_mode_config(self, data):
+        self.execute_command("update_config", data)
 
     def update(self):
         self.app.update()
