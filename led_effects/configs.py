@@ -101,3 +101,83 @@ class InterpolEffectConfig(EffectConfig):
                 ),
             }
         )
+
+
+class LightningBoltEffectConfig(EffectConfig):
+    def __init__(
+        self,
+        color=(255, 0, 0),
+        bg_color=(0, 0, 0),
+        sleep_ms=50,
+        tail_length=5,
+        min_brightness=1,
+        max_brightness=100,
+        min_await_between_bolts=100,
+        max_await_between_bolts=1000,
+        min_await_between_flashes=10,
+        max_await_between_flashes=50,
+        min_flashes=1,
+        max_flashes=5,
+        min_flashes_time=1,
+        max_flashes_time=200,
+    ):
+        super().__init__(color, bg_color, sleep_ms)
+        self.fields.update(
+            {
+                "tail_length": Field(
+                    tail_length,
+                    "tail_length",
+                    "The length of the snake tail effect in the LED animation",
+                ),
+                "min_brightness": Field(
+                    min_brightness,
+                    "min_brightness",
+                    "The minimum brightness of the lightning bolt effect",
+                ),
+                "max_brightness": Field(
+                    max_brightness,
+                    "max_brightness",
+                    "The maximum brightness of the lightning bolt effect",
+                ),
+                "min_await_between_bolts": Field(
+                    min_await_between_bolts,
+                    "min_await_between_bolts",
+                    "The minimum time to wait between lightning bolts (ms)",
+                ),
+                "max_await_between_bolts": Field(
+                    max_await_between_bolts,
+                    "max_await_between_bolts",
+                    "The maximum time to wait between lightning bolts (ms)",
+                ),
+                "min_await_between_flashes": Field(
+                    min_await_between_flashes,
+                    "min_await_between_flashes",
+                    "The minimum time to wait between flashes in a bolt (ms)",
+                ),
+                "max_await_between_flashes": Field(
+                    max_await_between_flashes,
+                    "max_await_between_flashes",
+                    "The maximum time to wait between flashes in a bolt (ms)",
+                ),
+                "min_flashes": Field(
+                    min_flashes,
+                    "min_flashes",
+                    "The minimum number of flashes in a lightning bolt",
+                ),
+                "max_flashes": Field(
+                    max_flashes,
+                    "max_flashes",
+                    "The maximum number of flashes in a lightning bolt",
+                ),
+                "min_flashes_time": Field(
+                    min_flashes_time,
+                    "min_flashes_time",
+                    "The minimum duration of a flash (ms)",
+                ),
+                "max_flashes_time": Field(
+                    max_flashes_time,
+                    "max_flashes_time",
+                    "The maximum duration of a flash (ms)",
+                ),
+            }
+        )
