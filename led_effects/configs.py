@@ -63,6 +63,41 @@ class SnakeEffectConfig(EffectConfig):
         tail_length=5,
     ):
         super().__init__(color, bg_color, sleep_ms)
-        self.fields.update({
-            "tail_length": Field(tail_length, "tail_length", "The length of the snake tail effect in the LED animation")
-        })
+        self.fields.update(
+            {
+                "tail_length": Field(
+                    tail_length,
+                    "tail_length",
+                    "The length of the snake tail effect in the LED animation",
+                )
+            }
+        )
+
+
+class InterpolEffectConfig(EffectConfig):
+    def __init__(
+        self,
+        color=(255, 0, 0),
+        bg_color=(0, 0, 0),
+        sleep_ms=50,
+        colors_array=None,
+        interpolate_steps=80,
+    ):
+        super().__init__(color, bg_color, sleep_ms)
+        if colors_array is None:
+            colors_array = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
+
+        self.fields.update(
+            {
+                "colors_array": Field(
+                    colors_array,
+                    "colors_array",
+                    "The RGB color array for interpolate between them",
+                ),
+                "interpolate_steps": Field(
+                    interpolate_steps,
+                    "interpolate_steps",
+                    "The number of steps to interpolate between colors in the color array",
+                ),
+            }
+        )

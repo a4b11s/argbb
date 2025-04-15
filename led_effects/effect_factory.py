@@ -1,5 +1,5 @@
 import gc
-from led_effects.configs import EffectConfig, SnakeEffectConfig
+from led_effects.configs import EffectConfig, InterpolEffectConfig, SnakeEffectConfig
 from led_effects.effect import Effect
 from led_effects.double_snake_effect import DoubleSnakeEffect
 from led_effects.fill_effect import FillEffect
@@ -43,7 +43,7 @@ class EffectFactory:
             "double_snake": SnakeEffectConfig,
             "fill": EffectConfig,
             "filling": EffectConfig,
-            "interpol": EffectConfig,
+            "interpol": InterpolEffectConfig,
             "lightningbolt": EffectConfig,
             "meteor": EffectConfig,
             "off": EffectConfig,
