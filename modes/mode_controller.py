@@ -62,6 +62,9 @@ class ModeController:
     def get_available_modes(self):
         return self.mode_factory.get_available_modes()
 
+    def get_current_mode_config(self):
+        return self.selected_mode.get_config()
+
     def update_mode_config(self, data: dict):
         return self.selected_mode.update_mode_config(data)
 

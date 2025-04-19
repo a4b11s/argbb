@@ -49,7 +49,17 @@ class Field:
     @value.setter
     def value(self, val):
         self._value = self._cast_type(val, self.val_type)
-
+        
+    def get_json(self):
+        """
+        Convert the field to a JSON-compatible dictionary.
+        """
+        return {
+            "value": self.value,
+            "type": self.val_type,
+            "name": self.name,
+            "description": self.description,
+        }
 
 class EffectConfig:
     """
@@ -101,6 +111,11 @@ class EffectConfig:
         """
         return list(self.fields.keys())
 
+    def get_json(self):
+        """
+        Convert the configuration to a JSON-compatible dictionary.
+        """
+        return {key: field.get_json() for key, field in self.fields.items()}
 
 class SnakeEffectConfig(EffectConfig):
     def __init__(

@@ -76,7 +76,12 @@ class Router:
                 )
             ),
         )
-
+        self.http_server.add_route(
+            "/get_mode_config",
+            lambda _, __: make_http_response(
+                body=json.dumps(self.input_controller.get_current_mode_config())
+            ),
+        )
     def _callback_wrapper(self, callback, callback_args_keys=None):
         def wrapper(method, body):
             if method == "POST":

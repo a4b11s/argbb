@@ -120,3 +120,6 @@ class InputController:
 
     def get_available_modes(self):
         return self.app.mode_controller.get_available_modes()
+    
+    def get_current_mode_config(self):
+        return self.app.mode_controller.get_current_mode_config()

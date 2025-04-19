@@ -60,6 +60,9 @@ class Mode:
     def update_mode_config(self, data: dict):
         self.led_effect.config.update_fields(data)
 
+    def get_config(self):
+        return self.led_effect.config.get_json()
+
     async def _loop(self, coroutine):
         while True:
             self.task = coroutine()
