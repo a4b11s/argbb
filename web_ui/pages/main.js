@@ -7,7 +7,17 @@ window.addEventListener("load", () => {
   const SPEED_PROGRESS = document.getElementById("speed-progress");
   const MODE_CONFIG_CONTAINER = document.getElementById("mode-config");
 
+  // Debounce utility function
+  const debounce = (func, delay) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), delay);
+    };
+  };
+
   const renderModeConfig = () => {
+    MODE_CONFIG_CONTAINER.innerHTML = ""; // Clear previous content
     fetch("/get_mode_config")
       .then((response) => response.json())
       .then((config) => {
@@ -41,6 +51,15 @@ window.addEventListener("load", () => {
             const colorPicker = new iro.ColorPicker(tab, {
               width: 200,
               color: `rgb(${field.value[0]}, ${field.value[1]}, ${field.value[2]})`,
+            });
+
+            const debouncedUpdateConfig = debounce((fieldName, rgb) => {
+              updateConfig(fieldName, [rgb.r, rgb.g, rgb.b]);
+            }, 300);
+
+            colorPicker.on("color:change", (color) => {
+              const rgb = color.rgb;
+              debouncedUpdateConfig(fieldName, rgb);
             });
 
             colorPicker.on("color:change", (color) => {
