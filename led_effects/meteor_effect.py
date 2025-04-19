@@ -56,11 +56,11 @@ class MeteorEffect(Effect):
             )
 
     def _calc_fade_multiplayer(self):
-
-        fade_factor = self.config.get("fade_factor")
+        fade_factor_min = self.config.get("fade_factor_min")
+        fade_factor_max = self.config.get("fade_factor_max")
         spark_probability = self.config.get("spark_probability")
 
-        fade_multiplayer = random.uniform(*fade_factor.value)  # type: ignore
+        fade_multiplayer = random.uniform(fade_factor_min.value, fade_factor_max.value)  # type: ignore
 
         if random.random() < spark_probability.value:  # type: ignore
             fade_multiplayer = 2 - fade_multiplayer

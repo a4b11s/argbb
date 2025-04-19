@@ -245,30 +245,37 @@ class MeteorEffectConfig(EffectConfig):
         bg_color=(0, 0, 0),
         sleep_ms=50,
         tail_length=50,
-        fade_factor=[0.7, 0.9],
+        fade_factor_min=0.7,
+        fade_factor_max=0.9,
         spark_probability=0.1,
     ):
         super().__init__(color, bg_color, sleep_ms)
         self.fields.update(
             {
-                "tail_length": Field(
-                    tail_length,
-                    "int",
-                    "tail_length",
-                    "The length of the snake tail effect in the LED animation",
-                ),
-                "fade_factor": Field(
-                    fade_factor,
-                    "array",
-                    "fade_factor",
-                    "The range of fade factors for the meteor effect",
-                ),
-                "spark_probability": Field(
-                    spark_probability,
-                    "float",
-                    "spark_probability",
-                    "The probability of a spark appearing in the meteor effect",
-                ),
+            "tail_length": Field(
+                tail_length,
+                "int",
+                "tail_length",
+                "The length of the snake tail effect in the LED animation",
+            ),
+            "fade_factor_min": Field(
+                fade_factor_min,
+                "float",
+                "fade_factor_min",
+                "The minimum fade factor for the meteor effect",
+            ),
+            "fade_factor_max": Field(
+                fade_factor_max,
+                "float",
+                "fade_factor_max",
+                "The maximum fade factor for the meteor effect",
+            ),
+            "spark_probability": Field(
+                spark_probability,
+                "float",
+                "spark_probability",
+                "The probability of a spark appearing in the meteor effect",
+            ),
             }
         )
 
