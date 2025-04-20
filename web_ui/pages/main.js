@@ -75,7 +75,7 @@ window.addEventListener("load", () => {
     if (field.type === "color") {
       tab.appendChild(createColorPicker(field, fieldName));
     } else if (field.type === "array") {
-      tab.appendChild(createColorList(field, fieldName));
+      tab.appendChild(createMultiColorPicker(field, fieldName));
     } else if (field.type === "int" || field.type === "float") {
       tab.appendChild(createNumberInput(field, fieldName));
     }
@@ -102,46 +102,36 @@ window.addEventListener("load", () => {
     return colorPickerContainer;
   };
 
-  const createColorList = (field, fieldName) => {
-    const colorList = document.createElement("ul");
-    colorList.className = "color-list";
+  const createMultiColorPicker = (field, fieldName) => {
+    const container = document.createElement("div");
+    const multiColorPicker = new iro.ColorPicker(container, {
+      width: 300,
+      colors: field.value.map((color) => `rgb(${color[0]}, ${color[1]}, ${color[2]})`),
+    });
 
-    field.value.forEach((color, index) => {
-      const listItem = document.createElement("li");
-      const colorPickerContainer = document.createElement("div");
-      listItem.appendChild(colorPickerContainer);
+    const debouncedUpdateConfig = debounce((fieldName, colors) => {
+      const rgbValues = colors.map((color) => [color.rgb.r, color.rgb.g, color.rgb.b]);
+      updateConfig(fieldName, rgbValues);
+    }, 300);
 
-      const colorPicker = new iro.ColorPicker(colorPickerContainer, {
-        width: 150,
-        color: `rgb(${color[0]}, ${color[1]}, ${color[2]})`,
-      });
-
-      const removeButton = createRemoveButton(() => {
-        field.value.splice(index, 1);
-        updateConfig(fieldName, field.value);
-        renderModeConfig();
-      });
-
-      colorPicker.on("color:change", (color) => {
-        const rgb = color.rgb;
-        field.value[index] = [rgb.r, rgb.g, rgb.b];
-        debounce(() => updateConfig(fieldName, field.value), 300)();
-      });
-
-      listItem.appendChild(colorPicker.el);
-      listItem.appendChild(removeButton);
-      colorList.appendChild(listItem);
+    multiColorPicker.on("color:change", () => {
+      debouncedUpdateConfig(fieldName, multiColorPicker.colors);
     });
 
     const addButton = createAddButton(() => {
-      field.value.push([255, 255, 255]);
-      updateConfig(fieldName, field.value);
-      renderModeConfig();
+      multiColorPicker.addColor("rgb(255, 255, 255)");
+      debouncedUpdateConfig(fieldName, multiColorPicker.colors);
     });
 
-    const container = document.createElement("div");
-    container.appendChild(colorList);
+    const removeButton = createRemoveButton(() => {
+      if (multiColorPicker.colors.length > 1) {
+        multiColorPicker.removeColor(multiColorPicker.colors.length - 1);
+        debouncedUpdateConfig(fieldName, multiColorPicker.colors);
+      }
+    });
+
     container.appendChild(addButton);
+    container.appendChild(removeButton);
 
     return container;
   };
