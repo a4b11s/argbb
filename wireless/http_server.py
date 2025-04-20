@@ -4,6 +4,18 @@ import sys
 from utils import make_http_response, parse_http
 from wireless.body_parser import BodyParser
 
+# HTTPServer constants
+SERVER_IP = "0.0.0.0"
+SERVER_PORT = 80
+
+
+# HTTP status codes enum
+class HTTPStatus:
+    OK = 200
+    CREATED = 201
+    BAD_REQUEST = 400
+    NOT_FOUND = 404
+
 
 class HTTPServer:
     def __init__(self, routes=None, body_parser: BodyParser | None = None) -> None:
@@ -23,14 +35,14 @@ class HTTPServer:
                 await writer.drain()
         except Exception as e:
             print("Error handling request:")
-            sys.print_exception(e) # type: ignore
+            sys.print_exception(e)  # type: ignore
             print("Request:", request)
         finally:
             writer.close()
             await writer.wait_closed()
 
     async def host_server(self):
-        await asyncio.start_server(self.handle_client, "0.0.0.0", 80)
+        await asyncio.start_server(self.handle_client, SERVER_IP, SERVER_PORT)
 
     def _process_request(self, request):
         method, path, _, header, body = request
@@ -46,16 +58,16 @@ class HTTPServer:
 
     @staticmethod
     def created(body):
-        return make_http_response(status_code=201, body=body)
+        return make_http_response(status_code=HTTPStatus.CREATED, body=body)
 
     @staticmethod
     def ok(body):
-        return make_http_response(status_code=200, body=body)
+        return make_http_response(status_code=HTTPStatus.OK, body=body)
 
     @staticmethod
     def not_found():
-        return make_http_response(status_code=404)
+        return make_http_response(status_code=HTTPStatus.NOT_FOUND)
 
     @staticmethod
     def bad_request():
-        return make_http_response(status_code=400)
+        return make_http_response(status_code=HTTPStatus.BAD_REQUEST)
