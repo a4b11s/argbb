@@ -21,87 +21,156 @@ window.addEventListener("load", () => {
     fetch("/get_mode_config")
       .then((response) => response.json())
       .then((config) => {
-        // Create a tab navigation container
-        const tabNav = document.createElement("div");
-        tabNav.className = "tab-nav";
-
-        // Create a content container for tabs
-        const tabContent = document.createElement("div");
-        tabContent.className = "tab-content";
-
-        // Track active tab
+        const tabNav = createTabNavigation();
+        const tabContent = createTabContent();
         let activeTab = null;
 
         Object.keys(config).forEach((fieldName, index) => {
           const field = config[fieldName];
-
-          // Create a tab button
-          const tabButton = document.createElement("button");
-          tabButton.className = "tab-button";
-          tabButton.textContent = field.name;
-          tabButton.title = field.description;
-
-          // Create a tab content container
-          const tab = document.createElement("div");
-          tab.className = "config-tab";
-          tab.style.display = index === 0 ? "block" : "none"; // Show the first tab by default
-
-          // Add input based on the field type
-          if (field.type === "color") {
-            const colorPicker = new iro.ColorPicker(tab, {
-              width: 200,
-              color: `rgb(${field.value[0]}, ${field.value[1]}, ${field.value[2]})`,
-            });
-
-            const debouncedUpdateConfig = debounce((fieldName, rgb) => {
-              updateConfig(fieldName, [rgb.r, rgb.g, rgb.b]);
-            }, 300);
-
-            colorPicker.on("color:change", (color) => {
-              const rgb = color.rgb;
-              debouncedUpdateConfig(fieldName, rgb);
-            });
-
-            colorPicker.on("color:change", (color) => {
-              const rgb = color.rgb;
-              updateConfig(fieldName, [rgb.r, rgb.g, rgb.b]);
-            });
-          } else if (field.type === "int" || field.type === "float") {
-            const input = document.createElement("input");
-            input.type = "number";
-            input.value = field.value;
-            input.step = field.type === "float" ? "0.1" : "1";
-            input.addEventListener("change", (e) => {
-              updateConfig(fieldName, parseFloat(e.target.value));
-            });
-            tab.appendChild(input);
-          }
-
-          // Append the tab content to the content container
-          tabContent.appendChild(tab);
-
-          // Add click event to switch tabs
-          tabButton.addEventListener("click", () => {
-            if (activeTab) {
-              activeTab.style.display = "none";
-            }
+          const tabButton = createTabButton(field, () => {
+            if (activeTab) activeTab.style.display = "none";
             tab.style.display = "block";
             activeTab = tab;
           });
 
-          // Append the tab button to the navigation
+          const tab = createTab(field, fieldName);
+          tab.style.display = index === 0 ? "block" : "none";
+
+          tabContent.appendChild(tab);
           tabNav.appendChild(tabButton);
 
-          // Set the first tab as active by default
-          if (index === 0) {
-            activeTab = tab;
-          }
+          if (index === 0) activeTab = tab;
         });
 
-        // Append the navigation and content containers to the main container
         MODE_CONFIG_CONTAINER.appendChild(tabNav);
         MODE_CONFIG_CONTAINER.appendChild(tabContent);
       });
+  };
+
+  const createTabNavigation = () => {
+    const tabNav = document.createElement("div");
+    tabNav.className = "tab-nav";
+    return tabNav;
+  };
+
+  const createTabContent = () => {
+    const tabContent = document.createElement("div");
+    tabContent.className = "tab-content";
+    return tabContent;
+  };
+
+  const createTabButton = (field, onClick) => {
+    const tabButton = document.createElement("button");
+    tabButton.className = "tab-button";
+    tabButton.textContent = field.name;
+    tabButton.title = field.description;
+    tabButton.addEventListener("click", onClick);
+    return tabButton;
+  };
+
+  const createTab = (field, fieldName) => {
+    const tab = document.createElement("div");
+    tab.className = "config-tab";
+
+    if (field.type === "color") {
+      tab.appendChild(createColorPicker(field, fieldName));
+    } else if (field.type === "array") {
+      tab.appendChild(createColorList(field, fieldName));
+    } else if (field.type === "int" || field.type === "float") {
+      tab.appendChild(createNumberInput(field, fieldName));
+    }
+
+    return tab;
+  };
+
+  const createColorPicker = (field, fieldName) => {
+    const colorPickerContainer = document.createElement("div");
+    const colorPicker = new iro.ColorPicker(colorPickerContainer, {
+      width: 200,
+      color: `rgb(${field.value[0]}, ${field.value[1]}, ${field.value[2]})`,
+    });
+
+    const debouncedUpdateConfig = debounce((fieldName, rgb) => {
+      updateConfig(fieldName, [rgb.r, rgb.g, rgb.b]);
+    }, 300);
+
+    colorPicker.on("color:change", (color) => {
+      const rgb = color.rgb;
+      debouncedUpdateConfig(fieldName, rgb);
+    });
+
+    return colorPickerContainer;
+  };
+
+  const createColorList = (field, fieldName) => {
+    const colorList = document.createElement("ul");
+    colorList.className = "color-list";
+
+    field.value.forEach((color, index) => {
+      const listItem = document.createElement("li");
+      const colorPickerContainer = document.createElement("div");
+      listItem.appendChild(colorPickerContainer);
+
+      const colorPicker = new iro.ColorPicker(colorPickerContainer, {
+        width: 150,
+        color: `rgb(${color[0]}, ${color[1]}, ${color[2]})`,
+      });
+
+      const removeButton = createRemoveButton(() => {
+        field.value.splice(index, 1);
+        updateConfig(fieldName, field.value);
+        renderModeConfig();
+      });
+
+      colorPicker.on("color:change", (color) => {
+        const rgb = color.rgb;
+        field.value[index] = [rgb.r, rgb.g, rgb.b];
+        debounce(() => updateConfig(fieldName, field.value), 300)();
+      });
+
+      listItem.appendChild(colorPicker.el);
+      listItem.appendChild(removeButton);
+      colorList.appendChild(listItem);
+    });
+
+    const addButton = createAddButton(() => {
+      field.value.push([255, 255, 255]);
+      updateConfig(fieldName, field.value);
+      renderModeConfig();
+    });
+
+    const container = document.createElement("div");
+    container.appendChild(colorList);
+    container.appendChild(addButton);
+
+    return container;
+  };
+
+  const createRemoveButton = (onClick) => {
+    const removeButton = document.createElement("button");
+    removeButton.textContent = "Remove";
+    removeButton.className = "remove-color-btn";
+    removeButton.addEventListener("click", onClick);
+    return removeButton;
+  };
+
+  const createAddButton = (onClick) => {
+    const addButton = document.createElement("button");
+    addButton.textContent = "Add Color";
+    addButton.className = "add-color-btn";
+    addButton.addEventListener("click", onClick);
+    return addButton;
+  };
+
+  const createNumberInput = (field, fieldName) => {
+    const input = document.createElement("input");
+    input.type = "number";
+    input.value = field.value;
+    input.step = field.type === "float" ? "0.1" : "1";
+    input.addEventListener("change", (e) => {
+      updateConfig(fieldName, parseFloat(e.target.value));
+    });
+    return input;
   };
 
   // Function to update the configuration
