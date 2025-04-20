@@ -134,17 +134,22 @@ input[type="number"]:focus {
 .tab-content {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 15px;
   padding: 20px;
   background-color: #222;
   border-radius: 8px;
   border: 1px solid #555;
+  min-height: 500px;
 }
 
 .config-tab {
   display: none;
+  width: fit-content;
+  justify-content: center;
 }
 
 .config-tab.active {
-  display: block;
+  display: flex;
 }

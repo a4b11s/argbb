@@ -29,17 +29,20 @@ window.addEventListener("load", () => {
           const field = config[fieldName];
           const tabButton = createTabButton(field, () => {
             if (activeTab) activeTab.style.display = "none";
-            tab.style.display = "block";
+            tab.style.display = "flex";
             activeTab = tab;
           });
 
           const tab = createTab(field, fieldName);
-          tab.style.display = index === 0 ? "block" : "none";
+          tab.style.display = index === 0 ? "flex" : "none";
 
           tabContent.appendChild(tab);
           tabNav.appendChild(tabButton);
 
-          if (index === 0) activeTab = tab;
+          if (index === 0) {
+            activeTab = tab;
+            tabButton.classList.add("active");
+          }
         });
 
         MODE_CONFIG_CONTAINER.appendChild(tabNav);
@@ -64,7 +67,13 @@ window.addEventListener("load", () => {
     tabButton.className = "tab-button";
     tabButton.textContent = field.name;
     tabButton.title = field.description;
-    tabButton.addEventListener("click", onClick);
+    tabButton.addEventListener("click", (e) => {
+      document
+        .querySelectorAll(".tab-button")
+        .forEach((btn) => btn.classList.remove("active"));
+      e.target.classList.add("active");
+      onClick();
+    });
     return tabButton;
   };
 
@@ -106,11 +115,17 @@ window.addEventListener("load", () => {
     const container = document.createElement("div");
     const multiColorPicker = new iro.ColorPicker(container, {
       width: 300,
-      colors: field.value.map((color) => `rgb(${color[0]}, ${color[1]}, ${color[2]})`),
+      colors: field.value.map(
+        (color) => `rgb(${color[0]}, ${color[1]}, ${color[2]})`
+      ),
     });
 
     const debouncedUpdateConfig = debounce((fieldName, colors) => {
-      const rgbValues = colors.map((color) => [color.rgb.r, color.rgb.g, color.rgb.b]);
+      const rgbValues = colors.map((color) => [
+        color.rgb.r,
+        color.rgb.g,
+        color.rgb.b,
+      ]);
       updateConfig(fieldName, rgbValues);
     }, 300);
 
