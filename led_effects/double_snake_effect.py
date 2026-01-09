@@ -13,12 +13,12 @@ class DoubleSnakeEffect(Effect):
         
         for i in range(len(self.strip)):
             # Clear pixels that are falling off the tails
-            tail_end = i - tail_length.value  # type: ignore
-            if tail_end >= 0:
-                self.strip[tail_end] = bg_color.value  # type: ignore
+            first_tail_end = i - tail_length.value  # type: ignore
+            if first_tail_end >= 0:
+                self.strip[first_tail_end] = bg_color.value  # type: ignore
             
-            second_tail_end = len(self.strip) - i + tail_length.value - 1  # type: ignore
-            if second_tail_end < len(self.strip):
+            second_tail_end = len(self.strip) - 1 - i - tail_length.value  # type: ignore
+            if second_tail_end >= 0 and second_tail_end < len(self.strip):
                 self.strip[second_tail_end] = bg_color.value  # type: ignore
             
             # Set the head pixels

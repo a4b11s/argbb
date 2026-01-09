@@ -11,13 +11,18 @@ class SnailEffect(Effect):
         self.strip.fill(bg_color.value)  # type: ignore
         
         for i in range(tail_length.value, len(self.strip)):  # type: ignore
-            # Set the head pixel
+            # Set the head pixel (full brightness)
             self.strip[i] = color.value  # type: ignore
             
-            # Dim the tail end pixel
-            tail_end = i - tail_length.value  # type: ignore
-            if tail_end >= 0:
-                self.strip[tail_end] = self._calc_brightness(color.value, 0.05)  # type: ignore
+            # Clear the pixel that's now outside the tail
+            clear_index = i - tail_length.value - 1  # type: ignore
+            if clear_index >= 0:
+                self.strip[clear_index] = bg_color.value  # type: ignore
+            
+            # Dim the pixel at the tail end (creates snail trail effect)
+            dim_index = i - tail_length.value  # type: ignore
+            if dim_index >= 0:
+                self.strip[dim_index] = self._calc_brightness(color.value, 0.05)  # type: ignore
 
             self.strip.write()
             await self._sleep(sleep_ms.value) # type: ignore
