@@ -1,8 +1,5 @@
 def calc_pointer(pointer: int, step: int, max_value: int) -> int:
-    pointer = (pointer + step) % max_value
-    if pointer < 0:
-        pointer = max_value
-    return pointer
+    return (pointer + step) % max_value
 
 
 def parse_http(http):

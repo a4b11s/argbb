@@ -7,14 +7,17 @@ class SnailEffect(Effect):
         sleep_ms = self.config.get("sleep_ms")
         tail_length = self.config.get("tail_length")
         bg_color = self.config.get("bg_color")
+        
         self.strip.fill(bg_color.value)  # type: ignore
+        
         for i in range(tail_length.value, len(self.strip)):  # type: ignore
+            # Fill the tail with full color
             for j in range(tail_length.value):  # type: ignore
                 index = i - j
-                if index < 0:
-                    continue
-                self.strip[index] = color.value  # type: ignore
+                if index >= 0:
+                    self.strip[index] = color.value  # type: ignore
 
+            # Dim the pixel at the tail end (creates snail trail)
             self.strip[i - tail_length.value] = self._calc_brightness(color.value, 0.05)  # type: ignore
 
             self.strip.write()

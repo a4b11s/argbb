@@ -7,12 +7,18 @@ class SnakeEffect(Effect):
         sleep_ms = self.config.get("sleep_ms")
         tail_length = self.config.get("tail_length")
         bg_color = self.config.get("bg_color")
+        
+        # Fill background once before the loop
+        self.strip.fill(bg_color.value)  # type: ignore
+        
         for i in range(len(self.strip)):
-            self.strip.fill(bg_color.value)  # type: ignore
-            for j in range(tail_length.value):  # type: ignore
-                index = i + j
-                if index >= len(self.strip):
-                    continue
-                self.strip[index] = color.value  # type: ignore
+            # Clear the pixel that's falling off the tail
+            tail_end = i - tail_length.value  # type: ignore
+            if tail_end >= 0:
+                self.strip[tail_end] = bg_color.value  # type: ignore
+            
+            # Set the head pixel
+            self.strip[i] = color.value  # type: ignore
+            
             self.strip.write()
             await self._sleep(sleep_ms.value)  # type: ignore
