@@ -44,17 +44,17 @@ class HTMLPreprocessor:
         """
         include_placeholder = ure.compile(r"{%\s+include\s+\"(.+?)\"\s+%}")
 
-        while include_placeholder.search(template):
-            file_name = include_placeholder.search(template).group(1)
+        match = include_placeholder.search(template)
+        while match:
+            file_name = match.group(1)
             try:
                 with open(file_name, "r") as file:
                     included_content = file.read()
             except Exception as e:
                 print(f"Error including file {file_name}: {e}")
                 included_content = "Error including file"
-            template = template.replace(
-                include_placeholder.search(template).group(0), included_content
-            )
+            template = template.replace(match.group(0), included_content)
+            match = include_placeholder.search(template)
 
         return template
 
@@ -84,12 +84,11 @@ class HTMLPreprocessor:
                 r"{%\s+for\s+(.+?)\s+in\s+" + for_obj + r"\s+%}"
             )
             end_placeholder = ure.compile(r"{%\s+endfor\s+%}")
-            if start_placeholder.search(template):
-                loop_body = template[
-                    start_placeholder.search(template)
-                    .end() : end_placeholder.search(template)
-                    .start()
-                ]
+            start_match = start_placeholder.search(template)
+            end_match = end_placeholder.search(template)
+            
+            if start_match and end_match:
+                loop_body = template[start_match.end() : end_match.start()]
                 processed_loop_body = []
 
                 for item in context[for_obj]:
@@ -99,13 +98,8 @@ class HTMLPreprocessor:
 
                 processed_loop_body = "".join(processed_loop_body)
                 template = template.replace(loop_body, processed_loop_body)
-
-                template = template.replace(
-                    start_placeholder.search(template).group(0), ""
-                )
-                template = template.replace(
-                    end_placeholder.search(template).group(0), ""
-                )
+                template = template.replace(start_match.group(0), "")
+                template = template.replace(end_match.group(0), "")
 
         return template
 
