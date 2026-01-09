@@ -30,14 +30,16 @@ class InterpolEffect(Effect):
         sleep_ms = self.config.get("sleep_ms")
         interpolate_steps = self.config.get("interpolate_steps")
         colors_array_length = len(colors_array)
+        strip_len = len(self.strip)
+        
         for i in range(colors_array_length - 1):
             colors = self._interpolate_colors(
                 colors_array[i], colors_array[i + 1], interpolate_steps.value  # type: ignore
             )
 
             for color in colors:
-                for i in range(len(self.strip)):
-                    self.strip[i] = color
+                # Fill the entire strip at once instead of pixel by pixel
+                self.strip.fill(color)
                 self.strip.write()
                 await self._sleep(sleep_ms.value)  # type: ignore
 

@@ -7,9 +7,13 @@ class ModeFactory:
     def __init__(self, strip):
         self.strip = strip
         self.effect_factory = EffectFactory()
+        self._mode_map_cache = None
 
     def _get_mode_map(self):
-        return {
+        if self._mode_map_cache is not None:
+            return self._mode_map_cache
+        
+        self._mode_map_cache = {
             "off": lambda: Mode(self.effect_factory.create_effect("off", self.strip)),
             "interpol": lambda: Mode(
                 self.effect_factory.create_effect("interpol", self.strip)
@@ -51,6 +55,7 @@ class ModeFactory:
                 self.effect_factory.create_effect("solid", self.strip)
             ),
         }
+        return self._mode_map_cache
 
     def get_available_modes(self):
         return list(self._get_mode_map().keys())

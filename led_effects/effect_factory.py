@@ -1,4 +1,3 @@
-import gc
 from led_effects.configs import (
     EffectConfig,
     InterpolEffectConfig,
@@ -27,8 +26,15 @@ from led_effects.train_effect import TrainEffect
 
 
 class EffectFactory:
+    def __init__(self):
+        self._effects_cache = None
+        self._configs_cache = None
+
     def _get_effects(self):
-        return {
+        if self._effects_cache is not None:
+            return self._effects_cache
+        
+        self._effects_cache = {
             "double_snake": DoubleSnakeEffect,
             "solid": FillEffect,
             "filling": FillingEffect,
@@ -44,9 +50,13 @@ class EffectFactory:
             "snake": SnakeEffect,
             "train": TrainEffect,
         }
+        return self._effects_cache
 
     def _get_configs(self):
-        return {
+        if self._configs_cache is not None:
+            return self._configs_cache
+        
+        self._configs_cache = {
             "double_snake": SnakeEffectConfig,
             "solid": EffectConfig,
             "filling": EffectConfig,
@@ -62,6 +72,7 @@ class EffectFactory:
             "snake": SnakeEffectConfig,
             "train": TrainEffectConfig,
         }
+        return self._configs_cache
 
     def create_effect(self, effect_type, strip) -> Effect:
         """
@@ -74,17 +85,12 @@ class EffectFactory:
         configs = self._get_configs()
 
         if effect_type not in effects:
-            del effects, configs
             raise ValueError(f"{effect_type} effect not found")
 
         if effect_type not in configs:
-            del effects, configs
             raise ValueError(f"Config for {effect_type} not found")
 
         effect = effects[effect_type]
         effect_config_var = configs[effect_type]
-
-        del effects, configs
-        gc.collect()
 
         return effect(strip, effect_config_var())

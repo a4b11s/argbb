@@ -8,16 +8,26 @@ class DoubleSnakeEffect(Effect):
         tail_length = self.config.get("tail_length")
         bg_color = self.config.get("bg_color")
 
+        # Fill background once before the loop
+        self.strip.fill(bg_color.value)  # type: ignore
+        
         for i in range(len(self.strip)):
-            self.strip.fill(bg_color.value)  # type: ignore
-            for j in range(tail_length.value):  # type: ignore
-                first_index = i + j
-                second_index = len(self.strip) - i - j - 1
-                if first_index >= len(self.strip):
-                    continue
-                if second_index < 0:
-                    continue
+            # Clear pixels that are falling off the tails
+            tail_end = i - tail_length.value  # type: ignore
+            if tail_end >= 0:
+                self.strip[tail_end] = bg_color.value  # type: ignore
+            
+            second_tail_end = len(self.strip) - i + tail_length.value - 1  # type: ignore
+            if second_tail_end < len(self.strip):
+                self.strip[second_tail_end] = bg_color.value  # type: ignore
+            
+            # Set the head pixels
+            first_index = i
+            second_index = len(self.strip) - i - 1
+            
+            if first_index < len(self.strip):
                 self.strip[first_index] = color.value  # type: ignore
+            if second_index >= 0 and second_index != first_index:
                 self.strip[second_index] = color.value  # type: ignore
 
             self.strip.write()
